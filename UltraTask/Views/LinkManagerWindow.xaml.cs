@@ -8,12 +8,14 @@ public partial class LinkManagerWindow : Window
 {
     private readonly List<LinkRule> _rules;
     private readonly Action _onChanged;
+    private List<LinkRule> _snapshot = [];
 
     public LinkManagerWindow(List<LinkRule> rules, Action onChanged)
     {
         InitializeComponent();
         _rules = rules;
         _onChanged = onChanged;
+        _snapshot = rules.Select(r => r.Clone()).ToList();
         RefreshList();
     }
 
@@ -84,5 +86,13 @@ public partial class LinkManagerWindow : Window
         }
     }
 
-    private void OnClose(object sender, RoutedEventArgs e) => Close();
+    private void OnCancel(object sender, RoutedEventArgs e)
+    {
+        _rules.Clear();
+        foreach (var r in _snapshot) _rules.Add(r);
+        _onChanged();
+        Close();
+    }
+
+    private void OnSave(object sender, RoutedEventArgs e) => Close();
 }

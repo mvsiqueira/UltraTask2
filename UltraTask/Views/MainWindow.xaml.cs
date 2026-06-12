@@ -22,7 +22,10 @@ public partial class MainWindow : Window
         InitializeComponent();
         DataContext = new MainViewModel();
 
-        Closed += (_, _) => Vm.SaveNow();
+        Services.LayoutService.Apply(Vm.Settings.LayoutMode);
+        RestoreWindowGeometry();
+
+        Closed += (_, _) => { SaveWindowGeometry(); Vm.SaveNow(); };
         BuildStamp.Text = GetBuildStamp();
         UpdateStatus();
 
@@ -34,6 +37,49 @@ public partial class MainWindow : Window
 
         if (string.IsNullOrEmpty(Vm.FilePath))
             Dispatcher.BeginInvoke(PromptOpenOrCreate);
+    }
+
+    // ===== Geometria da janela =====
+
+    private void RestoreWindowGeometry()
+    {
+        var s = Vm.Settings;
+
+        if (s.WindowState == "Maximized")
+        {
+            WindowState = System.Windows.WindowState.Maximized;
+            return;
+        }
+
+        // Valida posição dentro dos limites da tela virtual (multi-monitor)
+        if (s.WindowLeft.HasValue && s.WindowTop.HasValue)
+        {
+            var vl = SystemParameters.VirtualScreenLeft;
+            var vt = SystemParameters.VirtualScreenTop;
+            var vr = vl + SystemParameters.VirtualScreenWidth;
+            var vb = vt + SystemParameters.VirtualScreenHeight;
+
+            if (s.WindowLeft.Value >= vl && s.WindowLeft.Value + s.WindowWidth <= vr &&
+                s.WindowTop.Value  >= vt && s.WindowTop.Value  + s.WindowHeight <= vb)
+            {
+                Left = s.WindowLeft.Value;
+                Top  = s.WindowTop.Value;
+            }
+        }
+    }
+
+    private void SaveWindowGeometry()
+    {
+        var s = Vm.Settings;
+        s.WindowState = WindowState == System.Windows.WindowState.Maximized ? "Maximized" : "Normal";
+        if (WindowState == System.Windows.WindowState.Normal)
+        {
+            s.WindowWidth  = Width;
+            s.WindowHeight = Height;
+            s.WindowLeft   = Left;
+            s.WindowTop    = Top;
+        }
+        Services.PersistenceService.SaveSettings(s);
     }
 
     // ===== Título do arquivo =====
@@ -84,32 +130,23 @@ public partial class MainWindow : Window
         win.ShowDialog();
     }
 
-    private void OpenRowOrderManager(object sender, RoutedEventArgs e)
+    private void OpenFileProperties(object sender, RoutedEventArgs e)
     {
         if (Vm.CurrentFile is null) return;
-        var win = new TaskRowOrderWindow(Vm.CurrentFile.TaskRowOrder, newOrder =>
+        var win = new FilePropertiesWindow(Vm.CurrentFile, () =>
         {
-            Vm.CurrentFile.TaskRowOrder.Clear();
-            Vm.CurrentFile.TaskRowOrder.AddRange(newOrder);
             Vm.OnPropertyChanged(nameof(Vm.TaskRowOrder));
             Vm.ScheduleSave();
         }) { Owner = this };
         win.ShowDialog();
     }
 
-    private void OpenSettings(object sender, RoutedEventArgs e)
+    private void OpenAppSettings(object sender, RoutedEventArgs e)
     {
-        var dlg = new OpenFileDialog
-        {
-            Title = "Selecionar arquivo de tarefas",
-            Filter = "JSON (*.json)|*.json|Todos os arquivos|*.*",
-            CheckFileExists = false,
-        };
-        if (dlg.ShowDialog() == true)
-        {
-            Vm.LoadFile(dlg.FileName);
-            UpdateStatus();
-        }
+        var win = new AppSettingsWindow(Vm.Settings,
+            filePath => { Vm.LoadFile(filePath); UpdateStatus(); },
+            () => Vm.LayoutVersion++) { Owner = this };
+        win.ShowDialog();
     }
 
     private void OpenAbout(object sender, RoutedEventArgs e)
@@ -181,50 +218,69 @@ public partial class MainWindow : Window
 
         var idx = GetDropIndex(e.GetPosition(TaskList));
         _dropTargetIndex = idx;
-        ShowDropIndicator(idx, e.GetPosition(MainScroll));
+        SnapDropIndicator(idx);
     }
 
     private void OnListDrop(object sender, DragEventArgs e)
     {
+        var savedDropIndex = _dropTargetIndex; // salva antes de HideDropIndicator zerar
         HideDropIndicator();
         if (_draggingItem is null) return;
 
-        var fromIdx = Vm.AllItems.IndexOf(_draggingItem);
-        var toIdx = _dropTargetIndex;
-        if (fromIdx < 0 || toIdx < 0) return;
+        // Usa FilteredItems como referência para ambos os índices
+        var filtered = Vm.FilteredItems.Cast<TaskItemViewModel>().ToList();
+        var fromFiltered = filtered.IndexOf(_draggingItem);
+        var toFiltered = savedDropIndex;
+        if (fromFiltered < 0 || toFiltered < 0) return;
 
-        // Ajusta índice quando movendo para baixo
-        if (toIdx > fromIdx) toIdx--;
-        if (fromIdx != toIdx)
-            Vm.MoveItem(fromIdx, toIdx);
+        // Ajusta índice de destino após remoção da origem
+        if (toFiltered > fromFiltered) toFiltered--;
+        if (fromFiltered == toFiltered) return;
+
+        // Converte para índices em AllItems (que preserva a mesma ordem quando sem filtro)
+        var fromAll = Vm.AllItems.IndexOf(_draggingItem);
+        var toItem  = toFiltered < filtered.Count ? filtered[toFiltered] : null;
+        var toAll   = toItem is null ? Vm.AllItems.Count - 1 : Vm.AllItems.IndexOf(toItem);
+
+        Vm.MoveItem(fromAll, toAll);
     }
 
-    // Calcula o índice de inserção com base na posição Y do mouse na lista.
+    // Calcula o índice de inserção com base na posição Y do mouse relativa ao TaskList.
     private int GetDropIndex(Point posInList)
     {
         for (int i = 0; i < TaskList.Items.Count; i++)
         {
-            var container = TaskList.ItemContainerGenerator.ContainerFromIndex(i) as FrameworkElement;
-            if (container is null) continue;
-            var bounds = container.TransformToAncestor(TaskList)
-                                  .TransformBounds(new Rect(0, 0, container.ActualWidth, container.ActualHeight));
-            if (posInList.Y < bounds.Top + bounds.Height / 2)
+            if (TaskList.ItemContainerGenerator.ContainerFromIndex(i) is not FrameworkElement container) continue;
+            var top = container.TranslatePoint(new Point(0, 0), TaskList).Y;
+            if (posInList.Y < top + container.ActualHeight / 2)
                 return i;
         }
         return TaskList.Items.Count;
     }
 
-    // Mostra linha horizontal de drop no canvas de overlay.
-    private void ShowDropIndicator(int index, Point posInScroll)
+    // Posiciona o indicador de drop snapped ao topo do item alvo.
+    private void SnapDropIndicator(int dropIndex)
     {
-        if (index < 0 || index > TaskList.Items.Count)
+        if (dropIndex < 0 || dropIndex > TaskList.Items.Count) { HideDropIndicator(); return; }
+
+        FrameworkElement? container;
+        double yInContainer;
+
+        if (dropIndex < TaskList.Items.Count)
         {
-            HideDropIndicator();
-            return;
+            container = TaskList.ItemContainerGenerator.ContainerFromIndex(dropIndex) as FrameworkElement;
+            yInContainer = 0;
         }
+        else
+        {
+            container = TaskList.ItemContainerGenerator.ContainerFromIndex(dropIndex - 1) as FrameworkElement;
+            yInContainer = container?.ActualHeight ?? 0;
+        }
+
+        if (container is null) { HideDropIndicator(); return; }
+
+        var y = container.TranslatePoint(new Point(0, yInContainer), OverlayCanvas).Y;
         DropIndicator.Visibility = Visibility.Visible;
-        // Posiciona a linha na altura correta dentro do ScrollViewer
-        double y = posInScroll.Y;
         Canvas.SetTop(DropIndicator, y - 1);
     }
 

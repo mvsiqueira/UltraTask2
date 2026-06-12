@@ -12,17 +12,22 @@ public partial class TagManagerWindow : Window
     private readonly List<TagEntry> _tags;
     private readonly Action _onChanged;
     private string _pendingColor = "#2563EB";
+    private List<TagEntry> _snapshot = [];
 
     public TagManagerWindow(List<TagEntry> tags, Action onChanged)
     {
         InitializeComponent();
         _tags = tags;
         _onChanged = onChanged;
+        _snapshot = tags.Select(t => t.Clone()).ToList();
         RefreshList();
 
         // Exibe cor atual no swatch de nova tag
         UpdateNewSwatch();
     }
+
+    private void TakeSnapshot() =>
+        _snapshot = _tags.Select(t => t.Clone()).ToList();
 
     private void RefreshList()
     {
@@ -34,7 +39,7 @@ public partial class TagManagerWindow : Window
 
     private void OnNewTagKeyDown(object sender, KeyEventArgs e)
     {
-        if (e.Key == Key.Enter) AddTag();
+        if (e.Key == Key.Enter) { AddTag(); e.Handled = true; }
     }
 
     private void OnAddTag(object sender, RoutedEventArgs e) => AddTag();
@@ -170,7 +175,15 @@ public partial class TagManagerWindow : Window
         }
     }
 
-    private void OnClose(object sender, RoutedEventArgs e) => Close();
+    private void OnCancel(object sender, RoutedEventArgs e)
+    {
+        _tags.Clear();
+        foreach (var t in _snapshot) _tags.Add(t);
+        _onChanged();
+        Close();
+    }
+
+    private void OnSave(object sender, RoutedEventArgs e) => Close();
 
     // Seletor de cor simples via input de hex
     private static string? PickColor(string current)

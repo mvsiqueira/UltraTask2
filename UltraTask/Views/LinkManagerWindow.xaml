@@ -5,6 +5,7 @@
         Width="520" Height="460"
         Background="{StaticResource BgDeep}"
         WindowStyle="ToolWindow"
+        ShowInTaskbar="False"
         ResizeMode="CanResize"
         WindowStartupLocation="CenterOwner">
 
@@ -119,8 +120,10 @@
             <TextBlock Text="Use {match}, {1} ou {nome} na URL template."
                        Foreground="{StaticResource TextMuted}" FontSize="10"
                        VerticalAlignment="Center" Margin="0,0,12,0" />
-            <Button Content="Fechar" Click="OnClose"
-                    Style="{StaticResource LinkButtonStyle}" Padding="12,6" />
+            <Button Content="Cancelar" Click="OnCancel" IsCancel="True"
+                    Style="{StaticResource NeutralButtonStyle}" Margin="0,0,8,0" />
+            <Button Content="Salvar" Click="OnSave" IsDefault="True"
+                    Style="{StaticResource AccentButtonStyle}" />
         </StackPanel>
     </Grid>
 </Window>

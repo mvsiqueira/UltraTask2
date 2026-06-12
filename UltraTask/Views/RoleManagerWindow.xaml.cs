@@ -13,12 +13,16 @@ public partial class RoleManagerWindow : Window
     private readonly RoleConfig _config;
     private readonly Action _onChanged;
     private string _activeRole = "contact";
+    private RoleEntry _contactSnapshot = new();
+    private RoleEntry _assigneeSnapshot = new();
 
     public RoleManagerWindow(RoleConfig config, Action onChanged)
     {
         InitializeComponent();
         _config = config;
         _onChanged = onChanged;
+        _contactSnapshot = config.Contact.Clone();
+        _assigneeSnapshot = config.Assignee.Clone();
         BuildPanel(ContactPanel, config.Contact);
         BuildPanel(AssigneePanel, config.Assignee);
         UpdatePreview();
@@ -172,5 +176,22 @@ public partial class RoleManagerWindow : Window
         _activeRole = (Tabs.SelectedItem as TabItem)?.Tag?.ToString() ?? "contact";
     }
 
-    private void OnClose(object sender, RoutedEventArgs e) => Close();
+    private static void ApplySnapshot(RoleEntry target, RoleEntry source)
+    {
+        target.Color = source.Color;
+        target.Style = source.Style;
+        target.Prefix = source.Prefix;
+        target.Font = source.Font;
+        target.Size = source.Size;
+    }
+
+    private void OnCancel(object sender, RoutedEventArgs e)
+    {
+        ApplySnapshot(_config.Contact, _contactSnapshot);
+        ApplySnapshot(_config.Assignee, _assigneeSnapshot);
+        _onChanged();
+        Close();
+    }
+
+    private void OnSave(object sender, RoutedEventArgs e) => Close();
 }

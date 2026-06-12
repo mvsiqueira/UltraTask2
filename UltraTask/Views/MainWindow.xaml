@@ -19,7 +19,7 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="36" />
+            <ColumnDefinition Width="48" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
@@ -28,51 +28,69 @@
                 Background="{StaticResource BgPanel}"
                 BorderBrush="{StaticResource BorderSubtle}"
                 BorderThickness="0,0,1,0">
-            <StackPanel VerticalAlignment="Top" Margin="0,8,0,0">
+            <DockPanel>
+                <Button DockPanel.Dock="Bottom" ToolTip="Sobre"
+                        Click="OpenAbout" Style="{StaticResource SidebarButtonStyle}">
+                    <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Text="&#xE946;" />
+                </Button>
 
-                <Button ToolTip="Adicionar tarefa (Ctrl+N)"
-                        Command="{Binding AddTaskCommand}"
-                        Style="{StaticResource SidebarButtonStyle}">+</Button>
+                <StackPanel VerticalAlignment="Top" Margin="0,8,0,0">
+                    <Button ToolTip="Adicionar tarefa (Ctrl+N)"
+                            Command="{Binding AddTaskCommand}"
+                            Style="{StaticResource SidebarButtonStyle}">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Text="&#xE710;" />
+                    </Button>
+                    <Button ToolTip="Adicionar seção"
+                            Command="{Binding AddSectionCommand}"
+                            Style="{StaticResource SidebarButtonStyle}">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Text="&#xE8F4;" />
+                    </Button>
 
-                <Button ToolTip="Adicionar secao"
-                        Command="{Binding AddSectionCommand}"
-                        Style="{StaticResource SidebarButtonStyle}">|=</Button>
+                    <Separator Margin="4,4" Background="{StaticResource BorderSubtle}" />
 
-                <Separator Margin="4,4" Background="{StaticResource BorderSubtle}" />
+                    <ToggleButton ToolTip="Operações em lote"
+                                  IsChecked="{Binding BatchModeActive}"
+                                  Style="{StaticResource SidebarToggleStyle}">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Text="&#xE762;" />
+                    </ToggleButton>
+                    <Button ToolTip="Recarregar arquivo (Ctrl+R)"
+                            Command="{Binding ReloadCommand}"
+                            Style="{StaticResource SidebarButtonStyle}">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Text="&#xE72C;" />
+                    </Button>
 
-                <ToggleButton ToolTip="Operacoes em lote"
-                              IsChecked="{Binding BatchModeActive}"
-                              Style="{StaticResource SidebarToggleStyle}">[ ]</ToggleButton>
+                    <Separator Margin="4,4" Background="{StaticResource BorderSubtle}" />
 
-                <Button ToolTip="Recarregar arquivo (Ctrl+R)"
-                        Command="{Binding ReloadCommand}"
-                        Style="{StaticResource SidebarButtonStyle}">R</Button>
+                    <Button ToolTip="Gerenciar tags"
+                            Click="OpenTagManager"
+                            Style="{StaticResource SidebarButtonStyle}">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Text="&#xE8EC;" />
+                    </Button>
+                    <Button ToolTip="Gerenciar papéis"
+                            Click="OpenRoleManager"
+                            Style="{StaticResource SidebarButtonStyle}">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Text="&#xE77B;" />
+                    </Button>
+                    <Button ToolTip="Gerenciar links"
+                            Click="OpenLinkManager"
+                            Style="{StaticResource SidebarButtonStyle}">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Text="&#xE71B;" />
+                    </Button>
+                    <Button ToolTip="Propriedades do arquivo"
+                            Click="OpenFileProperties"
+                            Style="{StaticResource SidebarButtonStyle}">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Text="&#xE90F;" />
+                    </Button>
 
-                <Separator Margin="4,4" Background="{StaticResource BorderSubtle}" />
+                    <Separator Margin="4,4" Background="{StaticResource BorderSubtle}" />
 
-                <Button ToolTip="Gerenciar tags"
-                        Click="OpenTagManager"
-                        Style="{StaticResource SidebarButtonStyle}">#</Button>
-
-                <Button ToolTip="Gerenciar papeis"
-                        Click="OpenRoleManager"
-                        Style="{StaticResource SidebarButtonStyle}">@</Button>
-
-                <Button ToolTip="Gerenciar links"
-                        Click="OpenLinkManager"
-                        Style="{StaticResource SidebarButtonStyle}">~</Button>
-
-                <Button ToolTip="Ordem das colunas"
-                        Click="OpenRowOrderManager"
-                        Style="{StaticResource SidebarButtonStyle}">≡</Button>
-
-                <Separator Margin="4,4" Background="{StaticResource BorderSubtle}" />
-
-                <Button ToolTip="Abrir arquivo de tarefas"
-                        Click="OpenSettings"
-                        Style="{StaticResource SidebarButtonStyle}">...</Button>
-
-            </StackPanel>
+                    <Button ToolTip="Configurações do app"
+                            Click="OpenAppSettings"
+                            Style="{StaticResource SidebarButtonStyle}">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Text="&#xE713;" />
+                    </Button>
+                </StackPanel>
+            </DockPanel>
         </Border>
 
         <!-- AREA PRINCIPAL -->
@@ -104,10 +122,6 @@
                                            VerticalAlignment="Center"
                                            EditConfirmed="OnFileTitleConfirmed" />
 
-                    <Button Grid.Column="1" Content="Sobre"
-                            Click="OpenAbout"
-                            Style="{StaticResource LinkButtonStyle}"
-                            VerticalAlignment="Center" />
                 </Grid>
             </Border>
 
@@ -163,13 +177,10 @@
                               HorizontalScrollBarVisibility="Disabled"
                               Background="{StaticResource BgDeep}">
                     <ItemsControl x:Name="TaskList"
-                                  ItemsSource="{Binding FilteredItems}"
-                                  VirtualizingPanel.IsVirtualizing="True"
-                                  VirtualizingPanel.VirtualizationMode="Recycling"
-                                  ScrollViewer.CanContentScroll="True">
+                                  ItemsSource="{Binding FilteredItems}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <VirtualizingStackPanel />
+                                <StackPanel />
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
@@ -179,6 +190,7 @@
                                     TaskRowOrder="{Binding DataContext.TaskRowOrder, RelativeSource={RelativeSource AncestorType=Window}}"
                                     RoleConfig="{Binding DataContext.RoleConfig, RelativeSource={RelativeSource AncestorType=Window}}"
                                     RoleConfigVersion="{Binding DataContext.RoleConfigVersion, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    LayoutVersion="{Binding DataContext.LayoutVersion, RelativeSource={RelativeSource AncestorType=Window}}"
                                     TagCatalog="{Binding DataContext.TagCatalog, RelativeSource={RelativeSource AncestorType=Window}}"
                                     LinkCatalog="{Binding DataContext.LinkCatalog, RelativeSource={RelativeSource AncestorType=Window}}"
                                     BatchModeActive="{Binding DataContext.BatchModeActive, RelativeSource={RelativeSource AncestorType=Window}}"
@@ -195,11 +207,11 @@
                 </ScrollViewer>
 
                 <!-- Canvas overlay: indicador de drop (linha azul) -->
-                <Canvas IsHitTestVisible="False">
+                <Canvas x:Name="OverlayCanvas" IsHitTestVisible="False">
                     <Border x:Name="DropIndicator"
                             Visibility="Collapsed"
                             Height="2"
-                            Width="800"
+                            Width="3000"
                             Background="{StaticResource Accent}" />
                 </Canvas>
             </Grid>

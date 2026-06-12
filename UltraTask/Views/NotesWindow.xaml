@@ -6,6 +6,7 @@
         MinWidth="400" MinHeight="280"
         Background="{StaticResource BgDeep}"
         WindowStyle="ToolWindow"
+        ShowInTaskbar="False"
         ResizeMode="CanResize"
         WindowStartupLocation="CenterOwner">
 
