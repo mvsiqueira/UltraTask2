@@ -4,8 +4,6 @@
 - [ ] Tema claro / escuro (implementar efeito visual — estrutura já existe em AppSettings)
 
 ## Comportamento
-- [ ] Reordenar tarefas dentro de uma seção
-- [ ] Reordenar seções inteiras (mover bloco seção + suas tarefas juntos)
 - [ ] Popups sem botão na taskbar (ShowInTaskbar="False" nas janelas auxiliares)
 
 ## Feito ✓
