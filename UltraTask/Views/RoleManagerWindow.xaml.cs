@@ -1,0 +1,176 @@
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using UltraTask.Controls;
+using UltraTask.Models;
+
+namespace UltraTask.Views;
+
+// Janela de configuração dos papéis Contato e Designado.
+public partial class RoleManagerWindow : Window
+{
+    private readonly RoleConfig _config;
+    private readonly Action _onChanged;
+    private string _activeRole = "contact";
+
+    public RoleManagerWindow(RoleConfig config, Action onChanged)
+    {
+        InitializeComponent();
+        _config = config;
+        _onChanged = onChanged;
+        BuildPanel(ContactPanel, config.Contact);
+        BuildPanel(AssigneePanel, config.Assignee);
+        UpdatePreview();
+    }
+
+    // Monta os campos de edição de um papel dentro do painel indicado.
+    private void BuildPanel(StackPanel panel, RoleEntry role)
+    {
+        panel.Children.Clear();
+
+        AddRow(panel, "Cor:", MakeColorRow(role, () => { _onChanged(); UpdatePreview(); }));
+        AddRow(panel, "Estilo:", MakeStyleCombo(role, () => { _onChanged(); UpdatePreview(); }));
+        AddRow(panel, "Prefixo:", MakeTextInput(role.Prefix, v => { role.Prefix = v; _onChanged(); UpdatePreview(); }));
+        AddRow(panel, "Fonte:", MakeFontCombo(role, () => { _onChanged(); UpdatePreview(); }));
+        AddRow(panel, "Tamanho (chars):", MakeTextInput(role.Size, v => { role.Size = v; _onChanged(); UpdatePreview(); }, width: 60));
+    }
+
+    private static void AddRow(StackPanel parent, string label, UIElement control)
+    {
+        var row = new Grid { Margin = new Thickness(0, 4, 0, 0) };
+        row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(120) });
+        row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+        var lbl = new TextBlock
+        {
+            Text = label,
+            Foreground = new SolidColorBrush(Color.FromRgb(0x9C, 0xA3, 0xAF)),
+            VerticalAlignment = VerticalAlignment.Center,
+            FontSize = 11,
+        };
+        Grid.SetColumn(lbl, 0);
+        Grid.SetColumn(control, 1);
+        row.Children.Add(lbl);
+        row.Children.Add(control);
+        parent.Children.Add(row);
+    }
+
+    private UIElement MakeColorRow(RoleEntry role, Action onChange)
+    {
+        var panel = new StackPanel { Orientation = Orientation.Horizontal };
+        var swatch = new Border
+        {
+            Width = 24, Height = 24, CornerRadius = new CornerRadius(3),
+            Cursor = Cursors.Hand, Margin = new Thickness(0, 0, 6, 0),
+        };
+        try { swatch.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(role.Color)); }
+        catch { swatch.Background = Brushes.Gray; }
+
+        var hex = new TextBlock
+        {
+            Text = role.Color, Foreground = new SolidColorBrush(Color.FromRgb(0x9C, 0xA3, 0xAF)),
+            VerticalAlignment = VerticalAlignment.Center, FontSize = 11,
+        };
+
+        swatch.MouseLeftButtonDown += (_, _) =>
+        {
+            var dlg = new ColorPickerDialog(role.Color) { Owner = this };
+            if (dlg.ShowDialog() == true)
+            {
+                role.Color = dlg.SelectedColor;
+                hex.Text = dlg.SelectedColor;
+                try { swatch.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(dlg.SelectedColor)); }
+                catch { }
+                onChange();
+            }
+        };
+
+        panel.Children.Add(swatch);
+        panel.Children.Add(hex);
+        return panel;
+    }
+
+    private static ComboBox MakeStyleCombo(RoleEntry role, Action onChange)
+    {
+        var cb = new ComboBox
+        {
+            Background = new SolidColorBrush(Color.FromRgb(0x1F, 0x29, 0x37)),
+            Foreground = Brushes.White,
+            BorderBrush = new SolidColorBrush(Color.FromRgb(0x37, 0x41, 0x51)),
+            FontSize = 11, Height = 24,
+        };
+        cb.Items.Add("balloon");
+        cb.Items.Add("tag");
+        cb.SelectedItem = role.Style == "balloon" ? "balloon" : "tag";
+        cb.SelectionChanged += (_, _) =>
+        {
+            role.Style = cb.SelectedItem?.ToString() ?? "balloon";
+            onChange();
+        };
+        return cb;
+    }
+
+    private static ComboBox MakeFontCombo(RoleEntry role, Action onChange)
+    {
+        var cb = new ComboBox
+        {
+            Background = new SolidColorBrush(Color.FromRgb(0x1F, 0x29, 0x37)),
+            Foreground = Brushes.White,
+            BorderBrush = new SolidColorBrush(Color.FromRgb(0x37, 0x41, 0x51)),
+            FontSize = 11, Height = 24,
+        };
+        foreach (var f in new[] { "Segoe UI", "Consolas", "Courier New", "Verdana", "Arial", "Tahoma" })
+            cb.Items.Add(f);
+        cb.SelectedItem = cb.Items.Contains(role.Font) ? role.Font : "Segoe UI";
+        cb.SelectionChanged += (_, _) =>
+        {
+            role.Font = cb.SelectedItem?.ToString() ?? "Segoe UI";
+            onChange();
+        };
+        return cb;
+    }
+
+    private static TextBox MakeTextInput(string initial, Action<string> onChange, double width = double.NaN)
+    {
+        var tb = new TextBox
+        {
+            Text = initial,
+            Background = new SolidColorBrush(Color.FromRgb(0x1F, 0x29, 0x37)),
+            Foreground = Brushes.White,
+            BorderBrush = new SolidColorBrush(Color.FromRgb(0x37, 0x41, 0x51)),
+            Padding = new Thickness(4, 2, 4, 2),
+            FontSize = 11, Height = 24,
+        };
+        if (!double.IsNaN(width)) tb.Width = width;
+        tb.TextChanged += (_, _) => onChange(tb.Text);
+        return tb;
+    }
+
+    private void UpdatePreview()
+    {
+        PreviewPanel.Children.Clear();
+
+        foreach (var (role, value) in new[] { (_config.Contact, "Exemplo"), (_config.Assignee, "XPTO") })
+        {
+            var chip = new RoleChipControl
+            {
+                Value = value,
+                RoleColor = role.Color,
+                RoleStyle = role.Style,
+                RolePrefix = role.Prefix,
+                RoleFont = role.Font,
+                RoleSize = role.Size,
+                Margin = new Thickness(0, 0, 8, 0),
+            };
+            PreviewPanel.Children.Add(chip);
+        }
+    }
+
+    private void OnTabChanged(object sender, SelectionChangedEventArgs e)
+    {
+        _activeRole = (Tabs.SelectedItem as TabItem)?.Tag?.ToString() ?? "contact";
+    }
+
+    private void OnClose(object sender, RoutedEventArgs e) => Close();
+}

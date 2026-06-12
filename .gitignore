@@ -1,0 +1,23 @@
+# Build
+bin/
+obj/
+dist/
+
+# Visual Studio / Rider
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docView.xml
+.idea/
+
+# dotnet publish output
+publish/
+
+# Dados locais do usuário (não versionar arquivos de tarefas pessoais)
+*.json
+!UltraTask/**/*.json
+
+# OS
+Thumbs.db
+.DS_Store

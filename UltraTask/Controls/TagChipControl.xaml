@@ -1,0 +1,17 @@
+<UserControl x:Class="UltraTask.Controls.TagChipControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Name="Root"
+             VerticalAlignment="Center"
+             Cursor="Hand">
+    <Border x:Name="ChipBorder"
+            CornerRadius="{StaticResource ChipRadius}"
+            Padding="{StaticResource ChipPadding}"
+            Background="Gray">
+        <TextBlock x:Name="ChipLabel"
+                   FontSize="{StaticResource FontSizeSmall}"
+                   Foreground="White"
+                   VerticalAlignment="Center"
+                   FontWeight="Medium" />
+    </Border>
+</UserControl>

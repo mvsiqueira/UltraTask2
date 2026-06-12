@@ -1,0 +1,93 @@
+<UserControl x:Class="UltraTask.Controls.TaskRowControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctrl="clr-namespace:UltraTask.Controls"
+             x:Name="Root"
+             MouseEnter="OnMouseEnter"
+             MouseLeave="OnMouseLeave">
+
+    <UserControl.Resources>
+        <!-- Animação de hover na linha -->
+        <Style x:Key="RowBorderStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource BgRow}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                    <Setter Property="Background" Value="{StaticResource BgRowSelected}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <!-- Container da linha com altura fixa para alta densidade -->
+    <Border x:Name="RowBorder"
+            Style="{StaticResource RowBorderStyle}"
+            BorderBrush="{StaticResource BorderSubtle}"
+            BorderThickness="0,0,0,1"
+            Height="{StaticResource RowHeight}">
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <!-- Orelha de importância (3px) -->
+                <ColumnDefinition Width="4" />
+                <!-- Grip de drag-and-drop -->
+                <ColumnDefinition Width="12" />
+                <!-- Checkbox de lote (visível só no modo lote) -->
+                <ColumnDefinition x:Name="BatchCol" Width="0" />
+                <!-- Área de conteúdo configurável -->
+                <ColumnDefinition Width="*" />
+                <!-- Botão excluir -->
+                <ColumnDefinition Width="20" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Orelha de importância -->
+            <Border Grid.Column="0"
+                    x:Name="ImportantEar"
+                    Width="4"
+                    Background="Transparent"
+                    CornerRadius="2,0,0,2"
+                    Cursor="Hand"
+                    MouseLeftButtonDown="OnToggleImportant"
+                    ToolTip="Marcar como importante" />
+
+            <!-- Grip de drag-and-drop -->
+            <TextBlock Grid.Column="1"
+                       Text="⠿" FontSize="10"
+                       Foreground="{StaticResource TextMuted}"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Cursor="SizeAll"
+                       Opacity="0"
+                       x:Name="GripIcon"
+                       MouseLeftButtonDown="OnGripMouseDown" />
+
+            <!-- Checkbox de seleção em lote -->
+            <CheckBox Grid.Column="2"
+                      x:Name="BatchCheck"
+                      IsChecked="{Binding IsSelected}"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Center"
+                      Visibility="Collapsed" />
+
+            <!-- Área de conteúdo — montada dinamicamente via task_row_order -->
+            <ItemsControl Grid.Column="3"
+                          x:Name="ContentArea"
+                          VerticalAlignment="Center"
+                          Padding="2,0">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+
+            <!-- Botão excluir (visível ao hover) -->
+            <Button Grid.Column="4"
+                    x:Name="DeleteBtn"
+                    Style="{StaticResource RowDeleteButtonStyle}"
+                    VerticalAlignment="Center"
+                    Click="OnDeleteClick"
+                    ToolTip="Excluir" />
+
+        </Grid>
+    </Border>
+</UserControl>

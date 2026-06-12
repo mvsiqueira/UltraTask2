@@ -1,0 +1,36 @@
+<Window x:Class="UltraTask.Views.RoleManagerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Gerenciar Papéis"
+        Width="400" Height="420"
+        Background="{StaticResource BgDeep}"
+        WindowStyle="ToolWindow"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner">
+
+    <StackPanel Margin="16">
+
+        <!-- Prévia -->
+        <Border Background="{StaticResource BgPanel}" CornerRadius="4"
+                Padding="12,8" Margin="0,0,0,12">
+            <StackPanel Orientation="Horizontal" x:Name="PreviewPanel" />
+        </Border>
+
+        <!-- Tabs de papel -->
+        <TabControl x:Name="Tabs" Background="{StaticResource BgPanel}"
+                    BorderBrush="{StaticResource BorderSubtle}"
+                    SelectionChanged="OnTabChanged">
+            <TabItem Header="Contato" Tag="contact">
+                <StackPanel Margin="8" x:Name="ContactPanel" Tag="contact" />
+            </TabItem>
+            <TabItem Header="Designado" Tag="assignee">
+                <StackPanel Margin="8" x:Name="AssigneePanel" Tag="assignee" />
+            </TabItem>
+        </TabControl>
+
+        <Button Content="Fechar" Click="OnClose"
+                Style="{StaticResource LinkButtonStyle}"
+                HorizontalAlignment="Right"
+                Margin="0,12,0,0" Padding="12,6" />
+    </StackPanel>
+</Window>

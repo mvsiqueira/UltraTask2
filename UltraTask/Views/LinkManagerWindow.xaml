@@ -1,0 +1,126 @@
+<Window x:Class="UltraTask.Views.LinkManagerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Gerenciar Links Automáticos"
+        Width="520" Height="460"
+        Background="{StaticResource BgDeep}"
+        WindowStyle="ToolWindow"
+        ResizeMode="CanResize"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Lista de regras -->
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <ItemsControl x:Name="RuleList">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="{StaticResource BgPanel}"
+                                BorderBrush="{StaticResource BorderSubtle}"
+                                BorderThickness="0,0,0,1"
+                                Padding="8,6" Margin="0,0,0,2">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="70" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="22" />
+                                    <ColumnDefinition Width="22" />
+                                    <ColumnDefinition Width="22" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Nome -->
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Nome:"
+                                           Foreground="{StaticResource TextMuted}" FontSize="10"
+                                           VerticalAlignment="Center" />
+                                <TextBox Grid.Row="0" Grid.Column="1"
+                                         Text="{Binding Name, UpdateSourceTrigger=LostFocus}"
+                                         Background="Transparent" Foreground="{StaticResource TextPrimary}"
+                                         BorderThickness="0,0,0,1" BorderBrush="{StaticResource BorderSubtle}"
+                                         Padding="2,0" FontSize="11"
+                                         Tag="{Binding}" LostFocus="OnRuleFieldChanged" />
+
+                                <!-- Mover / excluir -->
+                                <Button Grid.Row="0" Grid.Column="2" Content="↑" FontSize="10"
+                                        Tag="{Binding}" Style="{StaticResource SidebarButtonStyle}"
+                                        Width="20" Height="20" Click="OnMoveUp" />
+                                <Button Grid.Row="0" Grid.Column="3" Content="↓" FontSize="10"
+                                        Tag="{Binding}" Style="{StaticResource SidebarButtonStyle}"
+                                        Width="20" Height="20" Click="OnMoveDown" />
+                                <Button Grid.Row="0" Grid.Column="4" Content="×" FontSize="13"
+                                        Tag="{Binding}" Style="{StaticResource DangerButtonStyle}"
+                                        Width="20" Height="20" Click="OnDeleteRule" />
+
+                                <!-- Regex -->
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Regex:"
+                                           Foreground="{StaticResource TextMuted}" FontSize="10"
+                                           VerticalAlignment="Center" Margin="0,4,0,0" />
+                                <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="4"
+                                         Text="{Binding Pattern, UpdateSourceTrigger=LostFocus}"
+                                         Background="Transparent" Foreground="{StaticResource TextPrimary}"
+                                         BorderThickness="0,0,0,1" BorderBrush="{StaticResource BorderSubtle}"
+                                         FontFamily="Consolas" FontSize="11" Padding="2,0" Margin="0,4,0,0"
+                                         Tag="{Binding}" LostFocus="OnRuleFieldChanged" />
+
+                                <!-- Template -->
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="URL:"
+                                           Foreground="{StaticResource TextMuted}" FontSize="10"
+                                           VerticalAlignment="Center" Margin="0,4,0,0" />
+                                <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4"
+                                         Text="{Binding UrlTemplate, UpdateSourceTrigger=LostFocus}"
+                                         Background="Transparent" Foreground="{StaticResource TextSecondary}"
+                                         BorderThickness="0,0,0,1" BorderBrush="{StaticResource BorderSubtle}"
+                                         FontSize="10" Padding="2,0" Margin="0,4,0,0"
+                                         Tag="{Binding}" LostFocus="OnRuleFieldChanged" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!-- Nova regra -->
+        <Border Grid.Row="1" Background="{StaticResource BgPanel}"
+                CornerRadius="4" Padding="8,6" Margin="0,8,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" x:Name="NewName"
+                         
+                         Background="{StaticResource BgRow}" Foreground="{StaticResource TextPrimary}"
+                         BorderBrush="{StaticResource BorderSubtle}" Padding="4,3" Margin="0,0,4,0" />
+                <TextBox Grid.Column="1" x:Name="NewPattern"
+                         
+                         Background="{StaticResource BgRow}" Foreground="{StaticResource TextPrimary}"
+                         BorderBrush="{StaticResource BorderSubtle}" FontFamily="Consolas"
+                         Padding="4,3" Margin="0,0,4,0" />
+                <Button Grid.Column="2" Content="+ Adicionar"
+                        Click="OnAddRule"
+                        Style="{StaticResource SidebarButtonStyle}"
+                        Width="Auto" Padding="8,0" />
+            </Grid>
+        </Border>
+
+        <!-- Rodapé -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal"
+                    HorizontalAlignment="Right" Margin="0,8,0,0">
+            <TextBlock Text="Use {match}, {1} ou {nome} na URL template."
+                       Foreground="{StaticResource TextMuted}" FontSize="10"
+                       VerticalAlignment="Center" Margin="0,0,12,0" />
+            <Button Content="Fechar" Click="OnClose"
+                    Style="{StaticResource LinkButtonStyle}" Padding="12,6" />
+        </StackPanel>
+    </Grid>
+</Window>
