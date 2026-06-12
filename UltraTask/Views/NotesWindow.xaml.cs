@@ -162,6 +162,8 @@ public partial class NotesWindow : Window
         Close();
     }
 
+    private void OnCancel(object sender, RoutedEventArgs e) => Close();
+
     private void OnClear(object sender, RoutedEventArgs e)
     {
         if (MessageBox.Show("Apagar todas as notas?", "UltraTask",

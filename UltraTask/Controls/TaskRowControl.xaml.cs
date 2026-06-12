@@ -43,6 +43,10 @@ public partial class TaskRowControl : UserControl
         DependencyProperty.Register(nameof(RoleConfigVersion), typeof(int), typeof(TaskRowControl),
             new PropertyMetadata(0, (d, _) => ((TaskRowControl)d).Rebuild()));
 
+    public static readonly DependencyProperty LayoutVersionProperty =
+        DependencyProperty.Register(nameof(LayoutVersion), typeof(int), typeof(TaskRowControl),
+            new PropertyMetadata(0, (d, _) => ((TaskRowControl)d).Rebuild()));
+
     public TaskItemViewModel? Item        { get => (TaskItemViewModel?)GetValue(ItemProperty);        set => SetValue(ItemProperty, value); }
     public IReadOnlyList<string>? TaskRowOrder { get => (IReadOnlyList<string>?)GetValue(TaskRowOrderProperty); set => SetValue(TaskRowOrderProperty, value); }
     public RoleConfig? RoleConfig         { get => (RoleConfig?)GetValue(RoleConfigProperty);         set => SetValue(RoleConfigProperty, value); }
@@ -50,6 +54,7 @@ public partial class TaskRowControl : UserControl
     public IReadOnlyList<LinkRule>? LinkCatalog { get => (IReadOnlyList<LinkRule>?)GetValue(LinkCatalogProperty); set => SetValue(LinkCatalogProperty, value); }
     public bool BatchModeActive           { get => (bool)GetValue(BatchModeActiveProperty);           set => SetValue(BatchModeActiveProperty, value); }
     public int RoleConfigVersion          { get => (int)GetValue(RoleConfigVersionProperty);          set => SetValue(RoleConfigVersionProperty, value); }
+    public int LayoutVersion              { get => (int)GetValue(LayoutVersionProperty);              set => SetValue(LayoutVersionProperty, value); }
 
     // --- Eventos para o pai ---
     public event EventHandler? DeleteRequested;
@@ -95,10 +100,9 @@ public partial class TaskRowControl : UserControl
     private void RebuildSection()
     {
         // Seção: fundo diferente, linha colorida, título em destaque
-        RowBorder.Height = (double)FindResource("SectionHeight");
+        RowBorder.SetResourceReference(HeightProperty, "SectionHeight");
         RowBorder.Background = (SolidColorBrush)FindResource("BgSection");
         ImportantEar.Visibility = Visibility.Collapsed;
-        GripIcon.Visibility = Visibility.Collapsed;
         DeleteBtn.Visibility = Visibility.Visible;
 
         var line = new Border
@@ -113,7 +117,7 @@ public partial class TaskRowControl : UserControl
         var editor = new InlineTextEditor
         {
             Text = Item.Title,
-            FontSize = 11,
+            FontSize = (double)FindResource("FontSizeBase"),
             FontWeight = FontWeights.SemiBold,
             Foreground = BrushFromHex(Item.SectionColor),
             VerticalAlignment = VerticalAlignment.Center,
@@ -159,14 +163,15 @@ public partial class TaskRowControl : UserControl
     private UIElement? BuildTagsToken()
     {
         if (Item is null || Item.TagNames.Count == 0) return null;
-        var panel = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 3, 0) };
+        var sp = (double)FindResource("TokenSpacing");
+        var panel = new StackPanel { Orientation = Orientation.Horizontal };
         var catalog = TagCatalog ?? [];
         var ordered = Item.TagNames
             .Select(n => catalog.FirstOrDefault(t => t.Name.Equals(n, StringComparison.OrdinalIgnoreCase)) ?? new TagEntry { Name = n })
             .OrderBy(t => t.Order);
         foreach (var tag in ordered)
         {
-            var chip = new TagChipControl { TagName = tag.Name, TagColor = tag.Color, TagSize = tag.Size, Margin = new Thickness(0, 0, 2, 0) };
+            var chip = new TagChipControl { TagName = tag.Name, TagColor = tag.Color, TagSize = tag.Size, Margin = new Thickness(0, 0, sp, 0) };
             chip.FilterRequested += (_, name) => FilterByTag?.Invoke(this, name);
             chip.MouseLeftButtonUp += (_, e) => { OpenTagEditor(); e.Handled = true; };
             panel.Children.Add(chip);
@@ -189,7 +194,7 @@ public partial class TaskRowControl : UserControl
         {
             Value = value, RoleColor = cfg.Color, RoleStyle = cfg.Style,
             RolePrefix = cfg.Prefix, RoleFont = cfg.Font, RoleSize = cfg.Size,
-            Margin = new Thickness(0, 0, 3, 0),
+            Margin = new Thickness(0, 0, (double)FindResource("TokenSpacing"), 0),
         };
         chip.MouseRightButtonDown += (_, e) =>
         {
@@ -255,6 +260,7 @@ public partial class TaskRowControl : UserControl
                 : (SolidColorBrush)FindResource("TextPrimary"),
             VerticalAlignment = VerticalAlignment.Center,
             MinWidth = 40,
+            Margin = new Thickness(0, 0, (double)FindResource("TokenSpacing"), 0),
         };
         if (Item.Completed)
             editor.ViewBlock.TextDecorations = TextDecorations.Strikethrough;
@@ -331,28 +337,53 @@ public partial class TaskRowControl : UserControl
     private UIElement? BuildNotesToken()
     {
         if (Item is null || !Item.HasNotes) return null;
+        var iconSize = (double)FindResource("FontSizeBase") + 2;
+        var circleSize = iconSize + 8;
+        var circle = new Border
+        {
+            Width = circleSize, Height = circleSize,
+            CornerRadius = new CornerRadius(circleSize / 2),
+            Background = new SolidColorBrush(Color.FromRgb(0xE5, 0xE7, 0xEB)),
+            Child = new TextBlock
+            {
+                Text = "",
+                FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                FontSize = iconSize - 2,
+                Foreground = new SolidColorBrush(Color.FromRgb(0x1F, 0x29, 0x37)),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+            },
+        };
         var btn = new Button
         {
-            Content = "📝",
-            FontSize = 11,
+            Content = circle,
             ToolTip = MakeTooltip("Ver notas"),
-            Style = (Style)FindResource("LinkButtonStyle"),
-            Margin = new Thickness(0, 0, 3, 0),
+            Padding = new Thickness(0),
+            Cursor = System.Windows.Input.Cursors.Hand,
+            Margin = new Thickness(0, 0, (double)FindResource("TokenSpacing"), 0),
+            Template = new ControlTemplate(typeof(Button))
+            {
+                VisualTree = new FrameworkElementFactory(typeof(ContentPresenter)),
+            },
         };
-        btn.Click += (_, _) => OpenNotesWindow();
+        btn.Click += (_, e) => { e.Handled = true; OpenNotesWindow(); };
         return btn;
     }
 
     private UIElement? BuildDateToken()
     {
         if (Item is null || string.IsNullOrEmpty(Item.DueDate)) return null;
+        var isOverdue = DateOnly.TryParse(Item.DueDate, out var due) && due < DateOnly.FromDateTime(DateTime.Today);
         var tb = new TextBlock
         {
             Text = FormatDate(Item.DueDate),
             FontSize = (double)FindResource("FontSizeSmall"),
-            Foreground = (SolidColorBrush)FindResource("TextSecondary"),
+            Foreground = isOverdue
+                ? (SolidColorBrush)FindResource("Danger")
+                : (SolidColorBrush)FindResource("TextSecondary"),
+            FontWeight = isOverdue ? FontWeights.SemiBold : FontWeights.Normal,
             VerticalAlignment = VerticalAlignment.Center,
-            Margin = new Thickness(0, 0, 3, 0),
+            Margin = new Thickness(0, 0, (double)FindResource("TokenSpacing"), 0),
             Cursor = Cursors.Hand,
         };
         tb.MouseLeftButtonDown += (_, _) => OpenDatePicker(tb);
@@ -591,45 +622,24 @@ public partial class TaskRowControl : UserControl
         win.ShowDialog();
     }
 
-    private void OpenDatePicker(TextBlock? anchor)
+    private void OpenDatePicker(TextBlock? _)
     {
-        // Seletor de data inline simples via popup
-        var popup = new System.Windows.Controls.Primitives.Popup
-        {
-            PlacementTarget = (UIElement?)anchor ?? this,
-            Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom,
-            StaysOpen = false,
-            IsOpen = true,
-        };
-        var dp = new DatePicker
-        {
-            Background = new SolidColorBrush(Color.FromRgb(0x1F, 0x29, 0x37)),
-            Foreground = Brushes.White,
-            SelectedDate = DateOnly.TryParse(Item!.DueDate, out var d)
-                ? new DateTime(d.Year, d.Month, d.Day)
-                : (DateTime?)null,
-        };
-        dp.SelectedDateChanged += (_, _) =>
-        {
-            if (dp.SelectedDate.HasValue)
-            {
-                Item.DueDate = DateOnly.FromDateTime(dp.SelectedDate.Value).ToString("yyyy-MM-dd");
-                ItemChanged?.Invoke(this, EventArgs.Empty);
-                Rebuild();
-            }
-            popup.IsOpen = false;
-        };
-        popup.Child = new Border
-        {
-            Background = new SolidColorBrush(Color.FromRgb(0x1F, 0x29, 0x37)),
-            Child = dp, Padding = new Thickness(4),
-        };
+        var win = new Views.DatePickerWindow(Item!.DueDate) { Owner = Window.GetWindow(this) };
+        if (win.ShowDialog() != true) return;
+
+        if (win.Cleared)
+            Item.DueDate = string.Empty;
+        else if (win.SelectedDate.HasValue)
+            Item.DueDate = win.SelectedDate.Value.ToString("yyyy-MM-dd");
+
+        ItemChanged?.Invoke(this, EventArgs.Empty);
+        Rebuild();
     }
 
     // ===== Auxiliares =====
 
     private static string FormatDate(string raw) =>
-        DateOnly.TryParse(raw, out var d) ? d.ToString("dd/MM/yy") : raw;
+        DateOnly.TryParse(raw, out var d) ? d.ToString("dd/MM/yyyy") : raw;
 
     // Cria tooltip com fundo escuro compatível com o tema.
     private static ToolTip MakeTooltip(string text) => new()

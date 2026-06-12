@@ -127,10 +127,11 @@
                     <Button Content="Limpar" Click="OnClear"
                             Style="{StaticResource DangerButtonStyle}"
                             Padding="10,4" Margin="0,0,8,0" />
-                    <Button Content="Salvar" Click="OnSave"
-                            Background="{StaticResource Accent}"
-                            Foreground="White" BorderThickness="0"
-                            Padding="16,4" />
+                    <Button Content="Cancelar" Click="OnCancel" IsCancel="True"
+                            Style="{StaticResource NeutralButtonStyle}"
+                            Padding="10,4" Margin="0,0,8,0" />
+                    <Button Content="Salvar" Click="OnSave" IsDefault="True"
+                            Style="{StaticResource AccentButtonStyle}" />
                 </StackPanel>
             </Grid>
         </Border>
