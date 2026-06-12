@@ -1,8 +1,5 @@
 # UltraTask — Pendências
 
-## Bugs
-- [ ] Verificar demais popups (contato/designado) fechando com ESC
-
 ## UI / Estilo
 - [ ] Tema claro / escuro (implementar efeito visual — estrutura já existe em AppSettings)
 
