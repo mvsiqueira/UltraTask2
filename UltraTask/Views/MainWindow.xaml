@@ -158,51 +158,90 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <!-- Linha de filtros -->
-            <Border Grid.Row="0"
-                    Background="{DynamicResource BgPanel}"
-                    BorderBrush="{DynamicResource BorderSubtle}"
-                    BorderThickness="0,0,0,1"
-                    Padding="8,4">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <!-- Barra superior: filtros (modo normal) ou ações em lote (modo lote) -->
+            <Grid Grid.Row="0">
 
-                    <TextBlock Text="Tag:" Foreground="{DynamicResource TextMuted}"
-                               VerticalAlignment="Center" Margin="0,0,4,0" />
-                    <ComboBox Width="110" Margin="0,0,8,0"
-                              ItemsSource="{Binding AvailableTags}"
-                              Text="{Binding FilterTag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                              IsEditable="True"
-                              Style="{StaticResource FilterComboStyle}" />
+                <!-- Linha de filtros — oculta no modo lote -->
+                <Border Background="{DynamicResource BgPanel}"
+                        BorderBrush="{DynamicResource BorderSubtle}"
+                        BorderThickness="0,0,0,1"
+                        Padding="8,4"
+                        Visibility="{Binding BatchModeActive, Converter={StaticResource InverseBoolToVisibility}}">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
 
-                    <TextBlock Text="Designado:" Foreground="{DynamicResource TextMuted}"
-                               VerticalAlignment="Center" Margin="0,0,4,0" />
-                    <ComboBox Width="110" Margin="0,0,8,0"
-                              ItemsSource="{Binding AvailableAssignees}"
-                              Text="{Binding FilterAssignee, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                              IsEditable="True"
-                              Style="{StaticResource FilterComboStyle}" />
+                        <TextBlock Text="Tag:" Foreground="{DynamicResource TextMuted}"
+                                   VerticalAlignment="Center" Margin="0,0,4,0" />
+                        <ComboBox Width="110" Margin="0,0,8,0"
+                                  ItemsSource="{Binding AvailableTags}"
+                                  Text="{Binding FilterTag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  IsEditable="True"
+                                  Style="{StaticResource FilterComboStyle}" />
 
-                    <TextBlock Text="Contato:" Foreground="{DynamicResource TextMuted}"
-                               VerticalAlignment="Center" Margin="0,0,4,0" />
-                    <ComboBox Width="110" Margin="0,0,8,0"
-                              ItemsSource="{Binding AvailableContacts}"
-                              Text="{Binding FilterContact, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                              IsEditable="True"
-                              Style="{StaticResource FilterComboStyle}" />
+                        <TextBlock Text="Designado:" Foreground="{DynamicResource TextMuted}"
+                                   VerticalAlignment="Center" Margin="0,0,4,0" />
+                        <ComboBox Width="110" Margin="0,0,8,0"
+                                  ItemsSource="{Binding AvailableAssignees}"
+                                  Text="{Binding FilterAssignee, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  IsEditable="True"
+                                  Style="{StaticResource FilterComboStyle}" />
 
-                    <CheckBox Margin="0,0,8,0"
-                              IsChecked="{Binding FilterImportantOnly}"
-                              VerticalAlignment="Center">
-                        <TextBlock Text="Importantes" Foreground="{DynamicResource TextMuted}" />
-                    </CheckBox>
+                        <TextBlock Text="Contato:" Foreground="{DynamicResource TextMuted}"
+                                   VerticalAlignment="Center" Margin="0,0,4,0" />
+                        <ComboBox Width="110" Margin="0,0,8,0"
+                                  ItemsSource="{Binding AvailableContacts}"
+                                  Text="{Binding FilterContact, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  IsEditable="True"
+                                  Style="{StaticResource FilterComboStyle}" />
 
-                    <Button Content="X Limpar"
-                            Command="{Binding ClearFiltersCommand}"
-                            Style="{StaticResource DangerButtonStyle}"
-                            Visibility="{Binding HasActiveFilter, Converter={StaticResource BoolToVisibility}}" />
+                        <CheckBox Margin="0,0,8,0"
+                                  IsChecked="{Binding FilterImportantOnly}"
+                                  VerticalAlignment="Center">
+                            <TextBlock Text="Importantes" Foreground="{DynamicResource TextMuted}" />
+                        </CheckBox>
 
-                </StackPanel>
-            </Border>
+                        <Button Content="X Limpar"
+                                Command="{Binding ClearFiltersCommand}"
+                                Style="{StaticResource DangerButtonStyle}"
+                                Visibility="{Binding HasActiveFilter, Converter={StaticResource BoolToVisibility}}" />
+
+                    </StackPanel>
+                </Border>
+
+                <!-- Barra de operações em lote — visível só no modo lote -->
+                <Border Background="{DynamicResource BgPanel}"
+                        BorderBrush="{DynamicResource BorderSubtle}"
+                        BorderThickness="0,0,0,1"
+                        Padding="8,4"
+                        Visibility="{Binding BatchModeActive, Converter={StaticResource BoolToVisibility}}">
+                    <DockPanel VerticalAlignment="Center">
+
+                        <!-- Contador + Selecionar tudo -->
+                        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,0">
+                            <TextBlock x:Name="BatchCountText"
+                                       Foreground="{DynamicResource TextMuted}"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,8,0" />
+                            <Button Content="Todas" Click="OnBatchSelectAll"
+                                    Style="{StaticResource NeutralButtonStyle}" Padding="6,2" />
+                            <Button Content="Nenhuma" Click="OnBatchClearSelection"
+                                    Style="{StaticResource NeutralButtonStyle}" Padding="6,2" Margin="4,0,0,0" />
+                        </StackPanel>
+
+                        <!-- Ações -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <Button x:Name="BtnBatchAddTag"    Content="+ Tag"        Click="OnBatchAddTag"        Style="{StaticResource NeutralButtonStyle}" Padding="8,3" Margin="0,0,4,0" />
+                            <Button x:Name="BtnBatchRemoveTag" Content="− Tag"        Click="OnBatchRemoveTag"     Style="{StaticResource NeutralButtonStyle}" Padding="8,3" Margin="0,0,4,0" />
+                            <Button x:Name="BtnBatchAssignee"  Content="Designado"    Click="OnBatchSetAssignee"   Style="{StaticResource NeutralButtonStyle}" Padding="8,3" Margin="0,0,4,0" />
+                            <Button x:Name="BtnBatchContact"   Content="Contato"      Click="OnBatchSetContact"    Style="{StaticResource NeutralButtonStyle}" Padding="8,3" Margin="0,0,4,0" />
+                            <Button                            Content="Importante"   Click="OnBatchImportant"     Style="{StaticResource NeutralButtonStyle}" Padding="8,3" Margin="0,0,4,0" />
+                            <Button                            Content="Não import."  Click="OnBatchNotImportant"  Style="{StaticResource NeutralButtonStyle}" Padding="8,3" Margin="0,0,4,0" />
+                            <Button                            Content="Excluir"      Click="OnBatchDelete"        Style="{StaticResource DangerButtonStyle}"  Padding="8,3" />
+                        </StackPanel>
+
+                    </DockPanel>
+                </Border>
+
+            </Grid>
 
             <!-- Lista principal com overlay de drop -->
             <Grid Grid.Row="1">

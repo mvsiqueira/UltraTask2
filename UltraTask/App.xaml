@@ -10,8 +10,9 @@
                 <ResourceDictionary Source="Themes/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <!-- Conversor global bool → Visibility -->
+            <!-- Conversores globais bool → Visibility -->
             <conv:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+            <conv:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibility" />
 
             <!-- Estilo global de fonte para alta densidade -->
             <Style TargetType="TextBlock">

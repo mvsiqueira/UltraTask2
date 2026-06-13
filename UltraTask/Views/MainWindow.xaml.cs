@@ -27,6 +27,11 @@ public partial class MainWindow : Window
         RestoreWindowGeometry();
 
         Closed += (_, _) => { SaveWindowGeometry(); Vm.SaveNow(); };
+        Vm.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(MainViewModel.BatchSelectedCount))
+                UpdateBatchCount();
+        };
         BuildStamp.Text = GetBuildStamp();
         UpdateStatus();
 
@@ -252,6 +257,172 @@ public partial class MainWindow : Window
     private void OnFilterByContact(object sender, string v)    => Vm.FilterContact  = v;
     private void OnFilterByAssignee(object sender, string v)   => Vm.FilterAssignee = v;
 
+    // ===== Modo lote =====
+
+    private void UpdateBatchCount()
+    {
+        if (BatchCountText is not null)
+            BatchCountText.Text = $"{Vm.BatchSelectedCount} selecionada(s)";
+    }
+
+    private void OnBatchSelectAll(object sender, RoutedEventArgs e)
+    {
+        foreach (var item in Vm.AllItems.Where(i => !i.IsSection))
+            item.IsSelected = true;
+        UpdateBatchCount();
+    }
+
+    private void OnBatchClearSelection(object sender, RoutedEventArgs e)
+    {
+        Vm.ClearBatchSelection();
+        UpdateBatchCount();
+    }
+
+    private void OnBatchAddTag(object sender, RoutedEventArgs e)
+    {
+        var catalog = Vm.TagCatalog;
+        if (catalog is null || catalog.Count == 0) return;
+        var menu = new ContextMenu();
+        foreach (var tag in catalog)
+        {
+            var item = new MenuItem { Header = tag.Name };
+            item.Click += (_, _) => { Vm.BatchAddTag(tag.Name); RefreshBatchResult(); };
+            menu.Items.Add(item);
+        }
+        menu.PlacementTarget = BtnBatchAddTag;
+        menu.IsOpen = true;
+    }
+
+    private void OnBatchRemoveTag(object sender, RoutedEventArgs e)
+    {
+        var tags = Vm.SelectedItems
+            .SelectMany(i => i.TagNames)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(t => t)
+            .ToList();
+        if (tags.Count == 0) return;
+        var menu = new ContextMenu();
+        foreach (var tag in tags)
+        {
+            var item = new MenuItem { Header = tag };
+            item.Click += (_, _) => { Vm.BatchRemoveTag(tag); RefreshBatchResult(); };
+            menu.Items.Add(item);
+        }
+        menu.PlacementTarget = BtnBatchRemoveTag;
+        menu.IsOpen = true;
+    }
+
+    private void OnBatchSetAssignee(object sender, RoutedEventArgs e)
+        => ShowRoleMenu(BtnBatchAssignee, Vm.AvailableAssignees,
+            v => { Vm.BatchSetAssignee(v); RefreshBatchResult(); });
+
+    private void OnBatchSetContact(object sender, RoutedEventArgs e)
+        => ShowRoleMenu(BtnBatchContact, Vm.AvailableContacts,
+            v => { Vm.BatchSetContact(v); RefreshBatchResult(); });
+
+    private static void ShowRoleMenu(UIElement anchor, IEnumerable<string> values, Action<string> apply)
+    {
+        var menu = new ContextMenu();
+        foreach (var v in values)
+        {
+            var val = v;
+            var item = new MenuItem { Header = val };
+            item.Click += (_, _) => apply(val);
+            menu.Items.Add(item);
+        }
+        menu.Items.Add(new Separator());
+        var custom = new MenuItem { Header = "Digitar..." };
+        custom.Click += (_, _) =>
+        {
+            var value = ShowInputDialog("Nome:");
+            if (value is not null) apply(value);
+        };
+        menu.Items.Add(custom);
+        var clear = new MenuItem { Header = "Limpar" };
+        clear.Click += (_, _) => apply(string.Empty);
+        menu.Items.Add(clear);
+        menu.PlacementTarget = anchor;
+        menu.IsOpen = true;
+    }
+
+    private static string? ShowInputDialog(string label)
+    {
+        var win = new Window
+        {
+            Title = "UltraTask",
+            Width = 360, Height = 160,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            ResizeMode = ResizeMode.CanResize,
+            WindowStyle = WindowStyle.ToolWindow,
+            ShowInTaskbar = false,
+            Background = (System.Windows.Media.Brush)System.Windows.Application.Current.Resources["BgDeep"],
+        };
+        var stack = new StackPanel { Margin = new Thickness(16, 12, 16, 12) };
+        var lbl = new TextBlock { Text = label, Margin = new Thickness(0, 0, 0, 6),
+            Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.Resources["TextMuted"] };
+        var box = new TextBox
+        {
+            Height = 26,
+            Background = (System.Windows.Media.Brush)System.Windows.Application.Current.Resources["BgPanel"],
+            Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.Resources["TextPrimary"],
+            BorderBrush = (System.Windows.Media.Brush)System.Windows.Application.Current.Resources["BorderSubtle"],
+            BorderThickness = new Thickness(1),
+            Padding = new Thickness(4, 2, 4, 2),
+            VerticalContentAlignment = VerticalAlignment.Center,
+        };
+        var btns = new StackPanel { Orientation = Orientation.Horizontal,
+            HorizontalAlignment = HorizontalAlignment.Right, Margin = new Thickness(0, 10, 0, 0) };
+        var ok = new Button { Content = "OK", Width = 72, IsDefault = true,
+            Style = (Style)System.Windows.Application.Current.Resources["AccentButtonStyle"] };
+        var cancel = new Button { Content = "Cancelar", Width = 80, IsCancel = true, Margin = new Thickness(6, 0, 0, 0),
+            Style = (Style)System.Windows.Application.Current.Resources["NeutralButtonStyle"] };
+
+        string? result = null;
+        ok.Click     += (_, _) => { result = box.Text.Trim(); win.DialogResult = true; };
+        cancel.Click += (_, _) => win.DialogResult = false;
+
+        btns.Children.Add(ok);
+        btns.Children.Add(cancel);
+        stack.Children.Add(lbl);
+        stack.Children.Add(box);
+        stack.Children.Add(btns);
+        win.Content = stack;
+        win.Owner = System.Windows.Application.Current.MainWindow;
+
+        win.Loaded += (_, _) => { box.Focus(); box.SelectAll(); };
+        return win.ShowDialog() == true ? result : null;
+    }
+
+    private void OnBatchImportant(object sender, RoutedEventArgs e)
+    {
+        Vm.BatchSetImportant(true);
+        RefreshBatchResult();
+    }
+
+    private void OnBatchNotImportant(object sender, RoutedEventArgs e)
+    {
+        Vm.BatchSetImportant(false);
+        RefreshBatchResult();
+    }
+
+    private void OnBatchDelete(object sender, RoutedEventArgs e)
+    {
+        var count = Vm.BatchSelectedCount;
+        if (count == 0) return;
+        var r = MessageBox.Show($"Excluir {count} tarefa(s) selecionada(s)?", "UltraTask",
+            MessageBoxButton.YesNo, MessageBoxImage.Question);
+        if (r != MessageBoxResult.Yes) return;
+        Vm.BatchDeleteCommand.Execute(null);
+        RefreshBatchResult();
+        UpdateStatus();
+    }
+
+    private void RefreshBatchResult()
+    {
+        Vm.LayoutVersion++;   // força rebuild de todas as linhas
+        UpdateBatchCount();
+    }
+
     // O TaskRowControl dispara DragStarted quando o usuário pressiona o grip.
     private void OnDragStarted(object sender, EventArgs e)
     {
@@ -355,8 +526,7 @@ public partial class MainWindow : Window
     private void UpdateStatus()
     {
         var total = Vm.AllItems.Count(i => !i.IsSection);
-        var done  = Vm.AllItems.Count(i => !i.IsSection && i.Completed);
-        StatusText.Text  = $"{total} tarefas · {done} concluídas";
+        StatusText.Text  = total == 1 ? "1 tarefa" : $"{total} tarefas";
         FilePathText.Text = Vm.FilePath;
         var appName  = "UltraTask";
         var listName = Vm.FileTitle;

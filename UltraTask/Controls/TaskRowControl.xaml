@@ -7,14 +7,9 @@
              MouseLeave="OnMouseLeave">
 
     <UserControl.Resources>
-        <!-- Animação de hover na linha -->
+        <!-- Fundo da linha — seleção controlada por code-behind -->
         <Style x:Key="RowBorderStyle" TargetType="Border">
             <Setter Property="Background" Value="{DynamicResource BgRow}" />
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                    <Setter Property="Background" Value="{DynamicResource BgRowSelected}" />
-                </DataTrigger>
-            </Style.Triggers>
         </Style>
     </UserControl.Resources>
 
@@ -64,10 +59,11 @@
             <!-- Checkbox de seleção em lote -->
             <CheckBox Grid.Column="2"
                       x:Name="BatchCheck"
-                      IsChecked="{Binding IsSelected}"
                       VerticalAlignment="Center"
                       HorizontalAlignment="Center"
-                      Visibility="Collapsed" />
+                      Visibility="Collapsed"
+                      Checked="OnBatchCheckChanged"
+                      Unchecked="OnBatchCheckChanged" />
 
             <!-- Área de conteúdo — montada dinamicamente via task_row_order -->
             <ItemsControl Grid.Column="3"

@@ -106,13 +106,28 @@ public partial class NotesWindow : Window
 
     // ===== Checklist =====
 
+    private void OnClearFormatting(object sender, RoutedEventArgs e)
+    {
+        var sel = Editor.Selection;
+        if (sel.IsEmpty) return;
+        sel.ApplyPropertyValue(TextElement.FontWeightProperty,  FontWeights.Normal);
+        sel.ApplyPropertyValue(TextElement.FontStyleProperty,   FontStyles.Normal);
+        sel.ApplyPropertyValue(Inline.TextDecorationsProperty,  new TextDecorationCollection());
+        sel.ApplyPropertyValue(TextElement.ForegroundProperty,  Editor.Foreground);
+        sel.ApplyPropertyValue(TextElement.BackgroundProperty,  Brushes.Transparent);
+        Editor.Focus();
+        UpdateToolbarState();
+    }
+
     private void OnInsertCheckbox(object sender, RoutedEventArgs e)
     {
         Editor.Focus();
-        var pos = Editor.CaretPosition;
-        // Insere ☐ seguido de espaço no início de uma nova linha (ou na posição atual)
-        pos.InsertTextInRun("☐ ");
-        Editor.CaretPosition = Editor.CaretPosition.GetPositionAtOffset(0) ?? Editor.CaretPosition;
+        var caretPara = Editor.CaretPosition.Paragraph;
+        if (caretPara is null) return;
+
+        var run = new Run("☐ ") { FontSize = 16 };
+        caretPara.Inlines.Add(run);
+        Editor.CaretPosition = run.ContentEnd;
     }
 
     // Clique no editor: se clicou em ☐ ou ☒, alterna estado.
@@ -121,15 +136,30 @@ public partial class NotesWindow : Window
         var pos = Editor.GetPositionFromPoint(e.GetPosition(Editor), true);
         if (pos is null) return;
 
-        // Pega o caractere na posição clicada
         var range = new TextRange(pos, pos.GetPositionAtOffset(1) ?? pos);
         var ch = range.Text;
 
         if (ch == "☐" || ch == "☒")
         {
             e.Handled = true;
-            var toggled = ch == "☐" ? "☒" : "☐";
-            range.Text = toggled;
+            range.Text = ch == "☐" ? "☒" : "☐";
+        }
+    }
+
+    // Cursor pointer ao passar sobre ☐/☒.
+    private void OnEditorMouseMove(object sender, MouseEventArgs e)
+    {
+        var pos = Editor.GetPositionFromPoint(e.GetPosition(Editor), false);
+        if (pos is not null)
+        {
+            var range = new TextRange(pos, pos.GetPositionAtOffset(1) ?? pos);
+            Editor.Cursor = (range.Text == "☐" || range.Text == "☒")
+                ? Cursors.Hand
+                : Cursors.IBeam;
+        }
+        else
+        {
+            Editor.Cursor = Cursors.IBeam;
         }
     }
 

@@ -17,7 +17,15 @@ public partial class TaskRowControl : UserControl
 
     public static readonly DependencyProperty ItemProperty =
         DependencyProperty.Register(nameof(Item), typeof(TaskItemViewModel), typeof(TaskRowControl),
-            new PropertyMetadata(null, (d, _) => ((TaskRowControl)d).Rebuild()));
+            new PropertyMetadata(null, (d, e) =>
+            {
+                var ctrl = (TaskRowControl)d;
+                if (e.OldValue is TaskItemViewModel old)
+                    old.PropertyChanged -= ctrl.OnItemPropertyChanged;
+                if (e.NewValue is TaskItemViewModel next)
+                    next.PropertyChanged += ctrl.OnItemPropertyChanged;
+                ctrl.Rebuild();
+            }));
 
     public static readonly DependencyProperty TaskRowOrderProperty =
         DependencyProperty.Register(nameof(TaskRowOrder), typeof(IReadOnlyList<string>), typeof(TaskRowControl),
@@ -75,6 +83,35 @@ public partial class TaskRowControl : UserControl
     {
         BatchCheck.Visibility = active ? Visibility.Visible : Visibility.Collapsed;
         BatchCol.Width = active ? new GridLength(20) : new GridLength(0);
+
+        if (!active && Item is not null)
+        {
+            Item.IsSelected = false;
+            UpdateSelectionBackground(false);
+        }
+    }
+
+    private void OnBatchCheckChanged(object sender, RoutedEventArgs e)
+    {
+        if (Item is not null)
+            Item.IsSelected = BatchCheck.IsChecked == true;
+    }
+
+    private void OnItemPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName != nameof(TaskItemViewModel.IsSelected)) return;
+        var selected = Item?.IsSelected ?? false;
+        BatchCheck.IsChecked = selected;
+        UpdateSelectionBackground(selected);
+    }
+
+    private void UpdateSelectionBackground(bool selected)
+    {
+        if (Item is null || Item.IsSection) return;
+        if (selected)
+            RowBorder.SetResourceReference(Border.BackgroundProperty, "BgRowSelected");
+        else
+            RowBorder.SetResourceReference(Border.BackgroundProperty, "BgRow");
     }
 
     // ===== Rebuild: monta a linha conforme item e configuração =====
@@ -418,7 +455,7 @@ public partial class TaskRowControl : UserControl
     {
         GripIcon.Opacity = 1;
         DeleteBtn.Opacity = 1;
-        if (!Item!.IsSection)
+        if (!Item!.IsSection && Item.IsSelected == false)
             RowBorder.SetResourceReference(BackgroundProperty, "BgRowHover");
     }
 
@@ -426,9 +463,8 @@ public partial class TaskRowControl : UserControl
     {
         GripIcon.Opacity = 0;
         DeleteBtn.Opacity = Item?.IsSelected == true ? 0.6 : 0;
-        if (!Item!.IsSection && Item.IsSelected == false)
-            // Limpa o valor local para o RowBorderStyle (DynamicResource) reassumir
-            RowBorder.ClearValue(BackgroundProperty);
+        if (!Item!.IsSection)
+            UpdateSelectionBackground(Item.IsSelected);
     }
 
     // ===== Excluir =====

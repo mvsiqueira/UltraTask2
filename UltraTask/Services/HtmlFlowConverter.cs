@@ -18,7 +18,6 @@ public static partial class HtmlFlowConverter
         {
             FontFamily = new FontFamily("Segoe UI"),
             FontSize = 12,
-            Foreground = Brushes.White,
             Background = Brushes.Transparent,
             PagePadding = new Thickness(0),
             LineHeight = 18,

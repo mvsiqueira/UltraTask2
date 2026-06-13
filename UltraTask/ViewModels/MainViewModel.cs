@@ -63,6 +63,8 @@ public partial class MainViewModel : ObservableObject
     public IEnumerable<TaskItemViewModel> SelectedItems =>
         AllItems.Where(i => i.IsSelected && !i.IsSection);
 
+    public int BatchSelectedCount => AllItems.Count(i => i.IsSelected && !i.IsSection);
+
     // --- Settings ---
 
     public AppSettings Settings { get; private set; } = new();
@@ -78,6 +80,16 @@ public partial class MainViewModel : ObservableObject
     {
         FilteredItems = CollectionViewSource.GetDefaultView(AllItems);
         FilteredItems.Filter = ApplyFilter;
+
+        AllItems.CollectionChanged += (_, e) =>
+        {
+            if (e.NewItems is not null)
+                foreach (TaskItemViewModel item in e.NewItems)
+                    item.PropertyChanged += OnItemPropertyChanged;
+            if (e.OldItems is not null)
+                foreach (TaskItemViewModel item in e.OldItems)
+                    item.PropertyChanged -= OnItemPropertyChanged;
+        };
 
         Settings = PersistenceService.LoadSettings();
 
@@ -261,6 +273,12 @@ public partial class MainViewModel : ObservableObject
         }
 
         ScheduleSave();
+    }
+
+    private void OnItemPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(TaskItemViewModel.IsSelected))
+            OnPropertyChanged(nameof(BatchSelectedCount));
     }
 
     // --- Operações em lote ---

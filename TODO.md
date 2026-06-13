@@ -1,10 +1,10 @@
 # UltraTask — Pendências
 
 ## A fazer
-- [ ] Reestilizar janela de Sobre
 - [ ] Implementar operações em lote
 
 ## Feito ✓
+- [x] Reestilizar janela de Sobre
 - [x] Customização do titlebar
 - [x] Padronizar cores do filtro
 - [x] Ajustar tamanho das janelas
