@@ -17,4 +17,6 @@ public class TagEntry
     // Largura fixa em caracteres; string vazia = largura automática.
     [JsonPropertyName("size")]
     public string Size { get; set; } = string.Empty;
+
+    public TagEntry Clone() => new() { Name = Name, Color = Color, Order = Order, Size = Size };
 }

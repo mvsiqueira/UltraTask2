@@ -10,14 +10,28 @@ public class AppSettings
     [JsonPropertyName("task_file_path")]
     public string TaskFilePath { get; set; } = string.Empty;
 
-    // Modo de layout da lista (ex: "compact", "normal").
+    // Tema visual: "dark" ou "light".
+    [JsonPropertyName("theme")]
+    public string Theme { get; set; } = "dark";
+
+    // Modo de layout da lista: "compact", "normal" ou "extended".
     [JsonPropertyName("layout_mode")]
     public string LayoutMode { get; set; } = "compact";
 
-    // Largura da janela principal salva entre sessões.
+    // Geometria da janela principal salva entre sessões.
     [JsonPropertyName("window_width")]
     public double WindowWidth { get; set; } = 1100;
 
     [JsonPropertyName("window_height")]
     public double WindowHeight { get; set; } = 700;
+
+    // null = não restaurar (centraliza na inicialização).
+    [JsonPropertyName("window_left")]
+    public double? WindowLeft { get; set; } = null;
+
+    [JsonPropertyName("window_top")]
+    public double? WindowTop { get; set; } = null;
+
+    [JsonPropertyName("window_state")]
+    public string WindowState { get; set; } = "Normal";
 }

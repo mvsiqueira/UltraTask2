@@ -138,6 +138,10 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private int _roleConfigVersion;
 
+    // Incrementado ao trocar layout — força rebuild para pegar novo FontSizeBase em código.
+    [ObservableProperty]
+    private int _layoutVersion;
+
     public IReadOnlyList<TagEntry> TagCatalog =>
         CurrentFile?.TagCatalog ?? [];
 
@@ -249,11 +253,11 @@ public partial class MainViewModel : ObservableObject
         var vm = AllItems[fromIndex];
         AllItems.Move(fromIndex, toIndex);
 
-        var model = CurrentFile?.Tasks[fromIndex];
-        if (model is not null && CurrentFile is not null)
+        // Sincroniza por referência do model, não por índice
+        if (CurrentFile is not null)
         {
-            CurrentFile.Tasks.RemoveAt(fromIndex);
-            CurrentFile.Tasks.Insert(toIndex, model);
+            CurrentFile.Tasks.Remove(vm.Model);
+            CurrentFile.Tasks.Insert(toIndex, vm.Model);
         }
 
         ScheduleSave();

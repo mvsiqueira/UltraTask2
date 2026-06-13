@@ -16,7 +16,7 @@
             <!-- Estilo global de fonte para alta densidade -->
             <Style TargetType="TextBlock">
                 <Setter Property="FontFamily" Value="Segoe UI" />
-                <Setter Property="FontSize" Value="{StaticResource FontSizeBase}" />
+                <Setter Property="FontSize" Value="12" />
                 <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
             </Style>
 

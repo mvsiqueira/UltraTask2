@@ -22,6 +22,8 @@ public class RoleEntry
     // Largura fixa em caracteres; string vazia = automático.
     [JsonPropertyName("size")]
     public string Size { get; set; } = string.Empty;
+
+    public RoleEntry Clone() => new() { Color = Color, Style = Style, Prefix = Prefix, Font = Font, Size = Size };
 }
 
 // Agrupa as configurações dos dois papéis configuráveis.

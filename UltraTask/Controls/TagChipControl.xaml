@@ -9,7 +9,7 @@
             Padding="{StaticResource ChipPadding}"
             Background="Gray">
         <TextBlock x:Name="ChipLabel"
-                   FontSize="{StaticResource FontSizeSmall}"
+                   FontSize="{DynamicResource FontSizeSmall}"
                    Foreground="White"
                    VerticalAlignment="Center"
                    FontWeight="Medium" />

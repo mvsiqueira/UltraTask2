@@ -33,6 +33,7 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.*" />
   </ItemGroup>
 
+
   <ItemGroup>
     <Resource Include="Resources\app-icon.ico" />
   </ItemGroup>

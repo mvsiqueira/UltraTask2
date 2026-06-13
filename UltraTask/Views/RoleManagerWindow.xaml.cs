@@ -155,7 +155,7 @@ public partial class RoleManagerWindow : Window
     {
         PreviewPanel.Children.Clear();
 
-        foreach (var (role, value) in new[] { (_config.Contact, "Exemplo"), (_config.Assignee, "XPTO") })
+        foreach (var (role, value) in new[] { (_config.Assignee, "Designado"), (_config.Contact, "Contato") })
         {
             var chip = new RoleChipControl
             {

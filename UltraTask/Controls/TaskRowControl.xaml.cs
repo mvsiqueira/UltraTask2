@@ -105,12 +105,17 @@ public partial class TaskRowControl : UserControl
         ImportantEar.Visibility = Visibility.Collapsed;
         DeleteBtn.Visibility = Visibility.Visible;
 
+        ContentArea.VerticalAlignment = VerticalAlignment.Bottom;
+        ContentArea.Margin = new Thickness(0, 0, 0, 6);
+
         var line = new Border
         {
             Width = 3,
+            Height = 16,
             Margin = new Thickness(0, 0, 6, 0),
             CornerRadius = new CornerRadius(1),
             Background = BrushFromHex(Item!.SectionColor),
+            VerticalAlignment = VerticalAlignment.Bottom,
         };
         ContentArea.Items.Add(line);
 
@@ -120,7 +125,7 @@ public partial class TaskRowControl : UserControl
             FontSize = (double)FindResource("FontSizeBase"),
             FontWeight = FontWeights.SemiBold,
             Foreground = BrushFromHex(Item.SectionColor),
-            VerticalAlignment = VerticalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Bottom,
         };
         editor.EditConfirmed += (_, _) =>
         {

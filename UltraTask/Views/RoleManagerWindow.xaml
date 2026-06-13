@@ -21,11 +21,11 @@
         <TabControl x:Name="Tabs" Background="{StaticResource BgPanel}"
                     BorderBrush="{StaticResource BorderSubtle}"
                     SelectionChanged="OnTabChanged">
-            <TabItem Header="Contato" Tag="contact">
-                <StackPanel Margin="8" x:Name="ContactPanel" Tag="contact" />
-            </TabItem>
             <TabItem Header="Designado" Tag="assignee">
                 <StackPanel Margin="8" x:Name="AssigneePanel" Tag="assignee" />
+            </TabItem>
+            <TabItem Header="Contato" Tag="contact">
+                <StackPanel Margin="8" x:Name="ContactPanel" Tag="contact" />
             </TabItem>
         </TabControl>
 

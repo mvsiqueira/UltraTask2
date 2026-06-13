@@ -3,8 +3,8 @@
 
     <!-- ===== Botões da barra lateral ===== -->
     <Style x:Key="SidebarButtonStyle" TargetType="Button">
-        <Setter Property="Width" Value="34" />
-        <Setter Property="Height" Value="30" />
+        <Setter Property="Width" Value="44" />
+        <Setter Property="Height" Value="38" />
         <Setter Property="Margin" Value="1,1" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="Background" Value="Transparent" />
@@ -35,8 +35,8 @@
 
     <!-- ToggleButton da barra lateral -->
     <Style x:Key="SidebarToggleStyle" TargetType="ToggleButton">
-        <Setter Property="Width" Value="34" />
-        <Setter Property="Height" Value="30" />
+        <Setter Property="Width" Value="44" />
+        <Setter Property="Height" Value="38" />
         <Setter Property="Margin" Value="1,1" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="Background" Value="Transparent" />
@@ -321,11 +321,18 @@
 
     <!-- ComboBox escuro global — suporta IsEditable=True via PART_EditableTextBox -->
     <Style x:Key="DarkComboStyle" TargetType="ComboBox">
+        <Style.Resources>
+            <Style TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="Segoe UI" />
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+            </Style>
+        </Style.Resources>
         <Setter Property="Background" Value="{StaticResource BgPanel}" />
         <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
         <Setter Property="BorderBrush" Value="{StaticResource BorderSubtle}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="FontSize" Value="11" />
+        <Setter Property="FontSize" Value="12" />
         <Setter Property="Padding" Value="4,2" />
         <Setter Property="Template">
             <Setter.Value>
@@ -340,6 +347,18 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="16" />
                             </Grid.ColumnDefinitions>
+
+                            <!-- Área clicável cobrindo toda a largura (modo não-editável) -->
+                            <ToggleButton Grid.ColumnSpan="2"
+                                          Background="Transparent" BorderThickness="0"
+                                          Focusable="False" ClickMode="Press"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border Background="Transparent" />
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
 
                             <!-- Texto da seleção (modo não-editável) -->
                             <ContentPresenter x:Name="ContentSite"
@@ -419,11 +438,19 @@
     <!-- Estilo implícito — aplica DarkComboStyle a todos os ComboBoxes sem estilo explícito -->
     <Style TargetType="ComboBox" BasedOn="{StaticResource DarkComboStyle}" />
 
-    <!-- ComboBox de filtro compacto -->
+    <!-- ComboBox de filtro compacto — fonte fixa, não responde ao layout -->
     <Style x:Key="FilterComboStyle" TargetType="ComboBox"
            BasedOn="{StaticResource DarkComboStyle}">
         <Setter Property="Height" Value="22" />
         <Setter Property="Padding" Value="4,1" />
+        <Setter Property="FontSize" Value="12" />
+        <Style.Resources>
+            <Style TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="Segoe UI" />
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+            </Style>
+        </Style.Resources>
     </Style>
 
     <!-- ComboBoxItem escuro -->
@@ -452,6 +479,75 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <!-- ===== Calendar escuro ===== -->
+
+    <Style TargetType="CalendarDayButton">
+        <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="MinWidth" Value="30" />
+        <Setter Property="MinHeight" Value="28" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CalendarDayButton">
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                            CornerRadius="3" Margin="1">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource BgRowHover}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource Accent}" />
+                            <Setter Property="Foreground" Value="White" />
+                        </Trigger>
+                        <Trigger Property="IsToday" Value="True">
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource Accent}" />
+                            <Setter TargetName="Bd" Property="BorderThickness" Value="1" />
+                        </Trigger>
+                        <Trigger Property="IsInactive" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource TextMuted}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.3" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="CalendarButton">
+        <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="MinWidth" Value="40" />
+        <Setter Property="MinHeight" Value="28" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CalendarButton">
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                            CornerRadius="3" Margin="1">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource BgRowHover}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Calendar">
+        <Setter Property="Background" Value="{StaticResource BgPanel}" />
+        <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+        <Setter Property="BorderBrush" Value="{StaticResource BorderSubtle}" />
+        <Setter Property="BorderThickness" Value="1" />
     </Style>
 
 </ResourceDictionary>

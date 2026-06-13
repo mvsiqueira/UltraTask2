@@ -21,4 +21,6 @@ public class LinkRule
 
     [JsonPropertyName("order")]
     public int Order { get; set; }
+
+    public LinkRule Clone() => new() { Id = Id, Name = Name, Pattern = Pattern, UrlTemplate = UrlTemplate, Order = Order };
 }

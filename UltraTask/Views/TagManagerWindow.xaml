@@ -7,7 +7,7 @@
         Background="{StaticResource BgDeep}"
         WindowStyle="ToolWindow"
         ShowInTaskbar="False"
-        ResizeMode="CanResize">
+        ResizeMode="NoResize">
 
     <Grid Margin="12">
         <Grid.RowDefinitions>
@@ -73,7 +73,7 @@
                                     <ColumnDefinition Width="16" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="40" />
-                                    <ColumnDefinition Width="24" />
+                                    <ColumnDefinition Width="62" />
                                     <ColumnDefinition Width="22" />
                                     <ColumnDefinition Width="22" />
                                     <ColumnDefinition Width="22" />
@@ -100,11 +100,13 @@
                                 <!-- Tamanho -->
                                 <TextBox Grid.Column="2"
                                          Text="{Binding Size, UpdateSourceTrigger=LostFocus}"
-                                         Background="Transparent"
-                                         Foreground="{StaticResource TextMuted}"
-                                         BorderThickness="0"
-                                         Padding="2,0"
-                                         ToolTip="Largura fixa (chars)"
+                                         Background="{StaticResource BgRow}"
+                                         Foreground="{StaticResource TextPrimary}"
+                                         BorderBrush="{StaticResource BorderSubtle}"
+                                         BorderThickness="1"
+                                         Padding="3,1"
+                                         Margin="0,0,6,0"
+                                         ToolTip="Largura fixa em caracteres (vazio = auto)"
                                          Tag="{Binding}"
                                          LostFocus="OnTagSizeChanged" />
 
@@ -113,7 +115,8 @@
                                            Text="{Binding Color}"
                                            FontSize="9"
                                            Foreground="{StaticResource TextMuted}"
-                                           VerticalAlignment="Center" />
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center" />
 
                                 <!-- Mover para cima -->
                                 <Button Grid.Column="4" Content="↑"

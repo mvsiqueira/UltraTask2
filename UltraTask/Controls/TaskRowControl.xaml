@@ -23,7 +23,8 @@
             Style="{StaticResource RowBorderStyle}"
             BorderBrush="{StaticResource BorderSubtle}"
             BorderThickness="0,0,0,1"
-            Height="{StaticResource RowHeight}">
+            Margin="{DynamicResource RowSpacing}"
+            Height="{DynamicResource RowHeight}">
 
         <Grid>
             <Grid.ColumnDefinitions>

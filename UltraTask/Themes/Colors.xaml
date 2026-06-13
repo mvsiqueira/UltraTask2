@@ -39,9 +39,11 @@
     <CornerRadius x:Key="ChipRadius">3</CornerRadius>
     <CornerRadius x:Key="BalloonRadius">10</CornerRadius>
     <sys:Double x:Key="RowHeight">26</sys:Double>
-    <sys:Double x:Key="SectionHeight">24</sys:Double>
+    <sys:Double x:Key="SectionHeight">36</sys:Double>
     <sys:Double x:Key="FontSizeBase">12</sys:Double>
     <sys:Double x:Key="FontSizeSmall">11</sys:Double>
     <sys:Double x:Key="SidebarWidth">36</sys:Double>
+    <Thickness x:Key="RowSpacing">0,0,0,0</Thickness>
+    <sys:Double x:Key="TokenSpacing">3</sys:Double>
 
 </ResourceDictionary>

@@ -43,7 +43,7 @@
                     <Button ToolTip="Adicionar seção"
                             Command="{Binding AddSectionCommand}"
                             Style="{StaticResource SidebarButtonStyle}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Text="&#xE8F4;" />
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Text="&#xECC8;" />
                     </Button>
 
                     <Separator Margin="4,4" Background="{StaticResource BorderSubtle}" />
@@ -116,7 +116,7 @@
 
                     <ctrl:InlineTextEditor Grid.Column="0"
                                            Text="{Binding FileTitle, Mode=TwoWay}"
-                                           FontSize="14"
+                                           FontSize="22"
                                            FontWeight="SemiBold"
                                            Foreground="{StaticResource TextPrimary}"
                                            VerticalAlignment="Center"
@@ -131,7 +131,7 @@
                     BorderBrush="{StaticResource BorderSubtle}"
                     BorderThickness="0,0,0,1"
                     Padding="8,4">
-                <WrapPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
 
                     <TextBlock Text="Tag:" Foreground="{StaticResource TextMuted}"
                                VerticalAlignment="Center" Margin="0,0,4,0" />
@@ -141,19 +141,19 @@
                               IsEditable="True"
                               Style="{StaticResource FilterComboStyle}" />
 
-                    <TextBlock Text="Contato:" Foreground="{StaticResource TextMuted}"
-                               VerticalAlignment="Center" Margin="0,0,4,0" />
-                    <ComboBox Width="110" Margin="0,0,8,0"
-                              ItemsSource="{Binding AvailableContacts}"
-                              Text="{Binding FilterContact, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                              IsEditable="True"
-                              Style="{StaticResource FilterComboStyle}" />
-
                     <TextBlock Text="Designado:" Foreground="{StaticResource TextMuted}"
                                VerticalAlignment="Center" Margin="0,0,4,0" />
                     <ComboBox Width="110" Margin="0,0,8,0"
                               ItemsSource="{Binding AvailableAssignees}"
                               Text="{Binding FilterAssignee, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              IsEditable="True"
+                              Style="{StaticResource FilterComboStyle}" />
+
+                    <TextBlock Text="Contato:" Foreground="{StaticResource TextMuted}"
+                               VerticalAlignment="Center" Margin="0,0,4,0" />
+                    <ComboBox Width="110" Margin="0,0,8,0"
+                              ItemsSource="{Binding AvailableContacts}"
+                              Text="{Binding FilterContact, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               IsEditable="True"
                               Style="{StaticResource FilterComboStyle}" />
 
@@ -167,7 +167,7 @@
                             Style="{StaticResource DangerButtonStyle}"
                             Visibility="{Binding HasActiveFilter, Converter={StaticResource BoolToVisibility}}" />
 
-                </WrapPanel>
+                </StackPanel>
             </Border>
 
             <!-- Lista principal com overlay de drop -->
