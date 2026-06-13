@@ -9,10 +9,10 @@
     <UserControl.Resources>
         <!-- Animação de hover na linha -->
         <Style x:Key="RowBorderStyle" TargetType="Border">
-            <Setter Property="Background" Value="{StaticResource BgRow}" />
+            <Setter Property="Background" Value="{DynamicResource BgRow}" />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                    <Setter Property="Background" Value="{StaticResource BgRowSelected}" />
+                    <Setter Property="Background" Value="{DynamicResource BgRowSelected}" />
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -21,7 +21,7 @@
     <!-- Container da linha com altura fixa para alta densidade -->
     <Border x:Name="RowBorder"
             Style="{StaticResource RowBorderStyle}"
-            BorderBrush="{StaticResource BorderSubtle}"
+            BorderBrush="{DynamicResource BorderSubtle}"
             BorderThickness="0,0,0,1"
             Margin="{DynamicResource RowSpacing}"
             Height="{DynamicResource RowHeight}">
@@ -53,7 +53,7 @@
             <!-- Grip de drag-and-drop -->
             <TextBlock Grid.Column="1"
                        Text="⠿" FontSize="10"
-                       Foreground="{StaticResource TextMuted}"
+                       Foreground="{DynamicResource TextMuted}"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center"
                        Cursor="SizeAll"

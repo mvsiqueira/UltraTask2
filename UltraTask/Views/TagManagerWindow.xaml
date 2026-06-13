@@ -4,7 +4,7 @@
         Title="Gerenciar Tags"
         Width="420" Height="500"
         MinWidth="360" MinHeight="300"
-        Background="{StaticResource BgDeep}"
+        Background="{DynamicResource BgDeep}"
         WindowStyle="ToolWindow"
         ShowInTaskbar="False"
         ResizeMode="NoResize">
@@ -18,7 +18,7 @@
 
         <!-- Formulário de nova tag -->
         <Border Grid.Row="0"
-                Background="{StaticResource BgPanel}"
+                Background="{DynamicResource BgPanel}"
                 CornerRadius="4" Padding="10,8" Margin="0,0,0,8">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -30,18 +30,18 @@
 
                 <TextBox Grid.Column="0" x:Name="NewTagName"
                          
-                         Background="{StaticResource BgRow}"
-                         Foreground="{StaticResource TextPrimary}"
-                         BorderBrush="{StaticResource BorderSubtle}"
+                         Background="{DynamicResource BgRow}"
+                         Foreground="{DynamicResource TextPrimary}"
+                         BorderBrush="{DynamicResource BorderSubtle}"
                          Padding="6,3" Margin="0,0,6,0"
                          KeyDown="OnNewTagKeyDown" />
 
                 <TextBox Grid.Column="1" x:Name="NewTagSize"
                          
                          Width="40"
-                         Background="{StaticResource BgRow}"
-                         Foreground="{StaticResource TextPrimary}"
-                         BorderBrush="{StaticResource BorderSubtle}"
+                         Background="{DynamicResource BgRow}"
+                         Foreground="{DynamicResource TextPrimary}"
+                         BorderBrush="{DynamicResource BorderSubtle}"
                          Padding="4,3" Margin="0,0,6,0"
                          ToolTip="Largura fixa em caracteres (vazio = auto)" />
 
@@ -64,8 +64,8 @@
             <ItemsControl x:Name="TagList">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Background="{StaticResource BgRow}"
-                                BorderBrush="{StaticResource BorderSubtle}"
+                        <Border Background="{DynamicResource BgRow}"
+                                BorderBrush="{DynamicResource BorderSubtle}"
                                 BorderThickness="0,0,0,1"
                                 Padding="8,4">
                             <Grid>
@@ -91,7 +91,7 @@
                                 <TextBox Grid.Column="1"
                                          Text="{Binding Name, UpdateSourceTrigger=LostFocus}"
                                          Background="Transparent"
-                                         Foreground="{StaticResource TextPrimary}"
+                                         Foreground="{DynamicResource TextPrimary}"
                                          BorderThickness="0"
                                          Padding="4,0"
                                          Tag="{Binding}"
@@ -100,9 +100,9 @@
                                 <!-- Tamanho -->
                                 <TextBox Grid.Column="2"
                                          Text="{Binding Size, UpdateSourceTrigger=LostFocus}"
-                                         Background="{StaticResource BgRow}"
-                                         Foreground="{StaticResource TextPrimary}"
-                                         BorderBrush="{StaticResource BorderSubtle}"
+                                         Background="{DynamicResource BgRow}"
+                                         Foreground="{DynamicResource TextPrimary}"
+                                         BorderBrush="{DynamicResource BorderSubtle}"
                                          BorderThickness="1"
                                          Padding="3,1"
                                          Margin="0,0,6,0"
@@ -114,7 +114,7 @@
                                 <TextBlock Grid.Column="3"
                                            Text="{Binding Color}"
                                            FontSize="9"
-                                           Foreground="{StaticResource TextMuted}"
+                                           Foreground="{DynamicResource TextMuted}"
                                            VerticalAlignment="Center"
                                            HorizontalAlignment="Center" />
 

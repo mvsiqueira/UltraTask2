@@ -86,6 +86,12 @@ public partial class TaskRowControl : UserControl
 
         if (Item.IsSection) { RebuildSection(); return; }
 
+        // Linha normal: restaura altura e deixa o RowBorderStyle (DynamicResource) controlar o fundo
+        RowBorder.SetResourceReference(HeightProperty, "RowHeight");
+        RowBorder.ClearValue(BackgroundProperty);
+        ContentArea.VerticalAlignment = VerticalAlignment.Center;
+        ContentArea.Margin = new Thickness(0);
+
         UpdateImportantEar();
         BuildContextMenu();
 
@@ -101,7 +107,7 @@ public partial class TaskRowControl : UserControl
     {
         // Seção: fundo diferente, linha colorida, título em destaque
         RowBorder.SetResourceReference(HeightProperty, "SectionHeight");
-        RowBorder.Background = (SolidColorBrush)FindResource("BgSection");
+        RowBorder.SetResourceReference(BackgroundProperty, "BgSection");
         ImportantEar.Visibility = Visibility.Collapsed;
         DeleteBtn.Visibility = Visibility.Visible;
 
@@ -229,11 +235,11 @@ public partial class TaskRowControl : UserControl
         {
             Text = currentValue,
             Width = 160,
-            Background = new SolidColorBrush(Color.FromRgb(0x1F, 0x29, 0x37)),
-            Foreground = Brushes.White,
-            BorderBrush = new SolidColorBrush(Color.FromRgb(0x3B, 0x82, 0xF6)),
+            Background = (SolidColorBrush)FindResource("BgPanel"),
+            Foreground = (SolidColorBrush)FindResource("TextPrimary"),
+            BorderBrush = (SolidColorBrush)FindResource("Accent"),
             Padding = new Thickness(4, 2, 4, 2),
-            CaretBrush = Brushes.White,
+            CaretBrush = (SolidColorBrush)FindResource("TextPrimary"),
         };
         tb.KeyDown += (_, e) =>
         {
@@ -249,7 +255,7 @@ public partial class TaskRowControl : UserControl
                 popup.IsOpen = false;
             }
         };
-        popup.Child = new Border { Background = new SolidColorBrush(Color.FromRgb(0x1F, 0x29, 0x37)), Child = tb, Padding = new Thickness(4) };
+        popup.Child = new Border { Background = (SolidColorBrush)FindResource("BgPanel"), Child = tb, Padding = new Thickness(4) };
         tb.Focus();
         tb.SelectAll();
     }
@@ -260,13 +266,12 @@ public partial class TaskRowControl : UserControl
         {
             Text = Item!.Title,
             FontSize = (double)FindResource("FontSizeBase"),
-            Foreground = Item.Completed
-                ? new SolidColorBrush(Color.FromRgb(0x6B, 0x72, 0x80))
-                : (SolidColorBrush)FindResource("TextPrimary"),
             VerticalAlignment = VerticalAlignment.Center,
             MinWidth = 40,
             Margin = new Thickness(0, 0, (double)FindResource("TokenSpacing"), 0),
         };
+        editor.SetResourceReference(Control.ForegroundProperty,
+            Item.Completed ? "TextMuted" : "TextPrimary");
         if (Item.Completed)
             editor.ViewBlock.TextDecorations = TextDecorations.Strikethrough;
 
@@ -348,13 +353,13 @@ public partial class TaskRowControl : UserControl
         {
             Width = circleSize, Height = circleSize,
             CornerRadius = new CornerRadius(circleSize / 2),
-            Background = new SolidColorBrush(Color.FromRgb(0xE5, 0xE7, 0xEB)),
+            Background = (SolidColorBrush)FindResource("Accent"),
             Child = new TextBlock
             {
                 Text = "",
                 FontFamily = new FontFamily("Segoe MDL2 Assets"),
                 FontSize = iconSize - 2,
-                Foreground = new SolidColorBrush(Color.FromRgb(0x1F, 0x29, 0x37)),
+                Foreground = Brushes.White,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             },
@@ -423,7 +428,7 @@ public partial class TaskRowControl : UserControl
         GripIcon.Opacity = 1;
         DeleteBtn.Opacity = 1;
         if (!Item!.IsSection)
-            RowBorder.Background = (SolidColorBrush)FindResource("BgRowHover");
+            RowBorder.SetResourceReference(BackgroundProperty, "BgRowHover");
     }
 
     private void OnMouseLeave(object sender, MouseEventArgs e)
@@ -431,7 +436,8 @@ public partial class TaskRowControl : UserControl
         GripIcon.Opacity = 0;
         DeleteBtn.Opacity = Item?.IsSelected == true ? 0.6 : 0;
         if (!Item!.IsSection && Item.IsSelected == false)
-            RowBorder.Background = (SolidColorBrush)FindResource("BgRow");
+            // Limpa o valor local para o RowBorderStyle (DynamicResource) reassumir
+            RowBorder.ClearValue(BackgroundProperty);
     }
 
     // ===== Excluir =====
@@ -583,8 +589,8 @@ public partial class TaskRowControl : UserControl
 
         var border = new Border
         {
-            Background = new SolidColorBrush(Color.FromRgb(0x1F, 0x29, 0x37)),
-            BorderBrush = new SolidColorBrush(Color.FromRgb(0x3B, 0x45, 0x57)),
+            Background = (SolidColorBrush)FindResource("BgPanel"),
+            BorderBrush = (SolidColorBrush)FindResource("BorderSubtle"),
             BorderThickness = new Thickness(1),
             CornerRadius = new CornerRadius(4),
             Child = panel,

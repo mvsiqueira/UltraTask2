@@ -2,11 +2,12 @@
 
 ## UI / Estilo
 - [ ] Tema claro / escuro (implementar efeito visual — estrutura já existe em AppSettings)
-
-## Comportamento
-- [ ] Popups sem botão na taskbar (ShowInTaskbar="False" nas janelas auxiliares)
+- [ ] Ajustar tamanho das janelas
+- [ ] Alterar cor do título, filtro e barra de botões
+- [ ] Separar linhas de tarefas
 
 ## Feito ✓
+- [x] Popups sem botão na taskbar (ShowInTaskbar="False" nas janelas auxiliares)
 - [x] Crash no seletor de data (substituído por Calendar modal)
 - [x] Data vencida em vermelho na linha da tarefa
 - [x] Editor de tags da tarefa (popup com chips coloridos)

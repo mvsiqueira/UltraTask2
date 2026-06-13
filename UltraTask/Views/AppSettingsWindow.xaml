@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Configurações"
         Width="420" Height="280"
-        Background="{StaticResource BgDeep}"
+        Background="{DynamicResource BgDeep}"
         WindowStyle="ToolWindow"
         ShowInTaskbar="False"
         ResizeMode="NoResize"
@@ -13,7 +13,7 @@
         <Style TargetType="TextBlock">
             <Setter Property="FontFamily" Value="Segoe UI" />
             <Setter Property="FontSize" Value="12" />
-            <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
         </Style>
     </Window.Resources>
 
@@ -27,7 +27,7 @@
 
             <!-- Arquivo de tarefas -->
             <TextBlock Text="Arquivo de tarefas"
-                       Foreground="{StaticResource TextPrimary}"
+                       Foreground="{DynamicResource TextPrimary}"
                        FontSize="12" FontWeight="SemiBold"
                        Margin="0,0,0,6" />
             <Grid Margin="0,0,0,16">
@@ -36,12 +36,12 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <Border Grid.Column="0"
-                        Background="{StaticResource BgPanel}"
-                        BorderBrush="{StaticResource BorderSubtle}"
+                        Background="{DynamicResource BgPanel}"
+                        BorderBrush="{DynamicResource BorderSubtle}"
                         BorderThickness="1" CornerRadius="4"
                         Padding="8,5" Margin="0,0,6,0">
                     <TextBlock x:Name="FilePathLabel"
-                               Foreground="{StaticResource TextSecondary}"
+                               Foreground="{DynamicResource TextSecondary}"
                                FontSize="11"
                                TextTrimming="CharacterEllipsis"
                                VerticalAlignment="Center" />
@@ -53,7 +53,7 @@
 
             <!-- Tema -->
             <TextBlock Text="Tema"
-                       Foreground="{StaticResource TextPrimary}"
+                       Foreground="{DynamicResource TextPrimary}"
                        FontSize="12" FontWeight="SemiBold"
                        Margin="0,0,0,6" />
             <ComboBox x:Name="ThemeCombo"
@@ -66,7 +66,7 @@
 
             <!-- Layout -->
             <TextBlock Text="Layout da lista"
-                       Foreground="{StaticResource TextPrimary}"
+                       Foreground="{DynamicResource TextPrimary}"
                        FontSize="12" FontWeight="SemiBold"
                        Margin="0,0,0,6" />
             <ComboBox x:Name="LayoutCombo"

@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Escolher cor"
         Width="320" Height="260"
-        Background="{StaticResource BgDeep}"
+        Background="{DynamicResource BgDeep}"
         WindowStyle="ToolWindow"
         ShowInTaskbar="False"
         ResizeMode="NoResize"
@@ -11,7 +11,7 @@
 
     <StackPanel Margin="16">
         <TextBlock Text="Cor em hexadecimal (#RRGGBB):"
-                   Foreground="{StaticResource TextSecondary}"
+                   Foreground="{DynamicResource TextSecondary}"
                    Margin="0,0,0,8" />
 
         <Grid>
@@ -20,9 +20,9 @@
                 <ColumnDefinition Width="36" />
             </Grid.ColumnDefinitions>
             <TextBox Grid.Column="0" x:Name="HexInput"
-                     Background="{StaticResource BgRow}"
-                     Foreground="{StaticResource TextPrimary}"
-                     BorderBrush="{StaticResource BorderSubtle}"
+                     Background="{DynamicResource BgRow}"
+                     Foreground="{DynamicResource TextPrimary}"
+                     BorderBrush="{DynamicResource BorderSubtle}"
                      Padding="6,4" Margin="0,0,8,0"
                      TextChanged="OnHexChanged" />
             <Border Grid.Column="1" x:Name="Preview"

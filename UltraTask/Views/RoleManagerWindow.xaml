@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Gerenciar Papéis"
         Width="400" Height="420"
-        Background="{StaticResource BgDeep}"
+        Background="{DynamicResource BgDeep}"
         WindowStyle="ToolWindow"
         ShowInTaskbar="False"
         ResizeMode="NoResize"
@@ -12,14 +12,14 @@
     <StackPanel Margin="16">
 
         <!-- Prévia -->
-        <Border Background="{StaticResource BgPanel}" CornerRadius="4"
+        <Border Background="{DynamicResource BgPanel}" CornerRadius="4"
                 Padding="12,8" Margin="0,0,0,12">
             <StackPanel Orientation="Horizontal" x:Name="PreviewPanel" />
         </Border>
 
         <!-- Tabs de papel -->
-        <TabControl x:Name="Tabs" Background="{StaticResource BgPanel}"
-                    BorderBrush="{StaticResource BorderSubtle}"
+        <TabControl x:Name="Tabs" Background="{DynamicResource BgPanel}"
+                    BorderBrush="{DynamicResource BorderSubtle}"
                     SelectionChanged="OnTabChanged">
             <TabItem Header="Designado" Tag="assignee">
                 <StackPanel Margin="8" x:Name="AssigneePanel" Tag="assignee" />

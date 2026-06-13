@@ -22,6 +22,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         DataContext = new MainViewModel();
 
+        Services.ThemeService.Apply(Vm.Settings.Theme);
         Services.LayoutService.Apply(Vm.Settings.LayoutMode);
         RestoreWindowGeometry();
 

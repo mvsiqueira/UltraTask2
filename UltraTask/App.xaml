@@ -17,19 +17,14 @@
             <Style TargetType="TextBlock">
                 <Setter Property="FontFamily" Value="Segoe UI" />
                 <Setter Property="FontSize" Value="12" />
-                <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+                <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
             </Style>
 
-            <!-- ScrollBar compacto e discreto -->
-            <Style TargetType="ScrollBar">
-                <Setter Property="Width" Value="6" />
-            </Style>
-
-            <!-- Tooltip escuro global -->
+<!-- Tooltip escuro global -->
             <Style TargetType="ToolTip">
-                <Setter Property="Background" Value="{StaticResource BgPanel}" />
-                <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
-                <Setter Property="BorderBrush" Value="{StaticResource BorderSubtle}" />
+                <Setter Property="Background" Value="{DynamicResource BgPanel}" />
+                <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtle}" />
                 <Setter Property="FontSize" Value="11" />
                 <Setter Property="Padding" Value="6,3" />
             </Style>

@@ -4,7 +4,7 @@
         Title="Notas"
         Width="560" Height="400"
         MinWidth="400" MinHeight="280"
-        Background="{StaticResource BgDeep}"
+        Background="{DynamicResource BgDeep}"
         WindowStyle="ToolWindow"
         ShowInTaskbar="False"
         ResizeMode="CanResize"
@@ -19,8 +19,8 @@
 
         <!-- Toolbar -->
         <Border Grid.Row="0"
-                Background="{StaticResource BgPanel}"
-                BorderBrush="{StaticResource BorderSubtle}"
+                Background="{DynamicResource BgPanel}"
+                BorderBrush="{DynamicResource BorderSubtle}"
                 BorderThickness="0,0,0,1"
                 Padding="4,3">
             <WrapPanel Orientation="Horizontal">
@@ -52,7 +52,7 @@
                 </ToggleButton>
 
                 <!-- Separador -->
-                <Border Width="1" Height="18" Background="{StaticResource BorderSubtle}" Margin="4,0" />
+                <Border Width="1" Height="18" Background="{DynamicResource BorderSubtle}" Margin="4,0" />
 
                 <!-- Cor de texto -->
                 <Button Width="26" Height="24" ToolTip="Cor do texto"
@@ -79,7 +79,7 @@
                 </Button>
 
                 <!-- Separador -->
-                <Border Width="1" Height="18" Background="{StaticResource BorderSubtle}" Margin="4,0" />
+                <Border Width="1" Height="18" Background="{DynamicResource BorderSubtle}" Margin="4,0" />
 
                 <!-- Checklist -->
                 <Button Content="☐" Width="26" Height="24" FontSize="13"
@@ -93,8 +93,8 @@
         <!-- Editor -->
         <RichTextBox x:Name="Editor"
                      Grid.Row="1"
-                     Background="{StaticResource BgDeep}"
-                     Foreground="{StaticResource TextPrimary}"
+                     Background="{DynamicResource BgDeep}"
+                     Foreground="{DynamicResource TextPrimary}"
                      BorderThickness="0"
                      Padding="12,8"
                      FontFamily="Segoe UI"
@@ -114,13 +114,13 @@
 
         <!-- Rodapé -->
         <Border Grid.Row="2"
-                Background="{StaticResource BgPanel}"
-                BorderBrush="{StaticResource BorderSubtle}"
+                Background="{DynamicResource BgPanel}"
+                BorderBrush="{DynamicResource BorderSubtle}"
                 BorderThickness="0,1,0,0"
                 Padding="8,6">
             <Grid>
                 <TextBlock x:Name="StatusText"
-                           Foreground="{StaticResource TextMuted}"
+                           Foreground="{DynamicResource TextMuted}"
                            FontSize="10"
                            VerticalAlignment="Center"
                            Text="Clique em ☐/☒ para alternar estado" />

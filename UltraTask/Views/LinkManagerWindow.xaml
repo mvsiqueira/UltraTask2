@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Gerenciar Links Automáticos"
         Width="520" Height="460"
-        Background="{StaticResource BgDeep}"
+        Background="{DynamicResource BgDeep}"
         WindowStyle="ToolWindow"
         ShowInTaskbar="False"
         ResizeMode="CanResize"
@@ -21,8 +21,8 @@
             <ItemsControl x:Name="RuleList">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Background="{StaticResource BgPanel}"
-                                BorderBrush="{StaticResource BorderSubtle}"
+                        <Border Background="{DynamicResource BgPanel}"
+                                BorderBrush="{DynamicResource BorderSubtle}"
                                 BorderThickness="0,0,0,1"
                                 Padding="8,6" Margin="0,0,0,2">
                             <Grid>
@@ -41,12 +41,12 @@
 
                                 <!-- Nome -->
                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Nome:"
-                                           Foreground="{StaticResource TextMuted}" FontSize="10"
+                                           Foreground="{DynamicResource TextMuted}" FontSize="10"
                                            VerticalAlignment="Center" />
                                 <TextBox Grid.Row="0" Grid.Column="1"
                                          Text="{Binding Name, UpdateSourceTrigger=LostFocus}"
-                                         Background="Transparent" Foreground="{StaticResource TextPrimary}"
-                                         BorderThickness="0,0,0,1" BorderBrush="{StaticResource BorderSubtle}"
+                                         Background="Transparent" Foreground="{DynamicResource TextPrimary}"
+                                         BorderThickness="0,0,0,1" BorderBrush="{DynamicResource BorderSubtle}"
                                          Padding="2,0" FontSize="11"
                                          Tag="{Binding}" LostFocus="OnRuleFieldChanged" />
 
@@ -63,23 +63,23 @@
 
                                 <!-- Regex -->
                                 <TextBlock Grid.Row="1" Grid.Column="0" Text="Regex:"
-                                           Foreground="{StaticResource TextMuted}" FontSize="10"
+                                           Foreground="{DynamicResource TextMuted}" FontSize="10"
                                            VerticalAlignment="Center" Margin="0,4,0,0" />
                                 <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="4"
                                          Text="{Binding Pattern, UpdateSourceTrigger=LostFocus}"
-                                         Background="Transparent" Foreground="{StaticResource TextPrimary}"
-                                         BorderThickness="0,0,0,1" BorderBrush="{StaticResource BorderSubtle}"
+                                         Background="Transparent" Foreground="{DynamicResource TextPrimary}"
+                                         BorderThickness="0,0,0,1" BorderBrush="{DynamicResource BorderSubtle}"
                                          FontFamily="Consolas" FontSize="11" Padding="2,0" Margin="0,4,0,0"
                                          Tag="{Binding}" LostFocus="OnRuleFieldChanged" />
 
                                 <!-- Template -->
                                 <TextBlock Grid.Row="2" Grid.Column="0" Text="URL:"
-                                           Foreground="{StaticResource TextMuted}" FontSize="10"
+                                           Foreground="{DynamicResource TextMuted}" FontSize="10"
                                            VerticalAlignment="Center" Margin="0,4,0,0" />
                                 <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4"
                                          Text="{Binding UrlTemplate, UpdateSourceTrigger=LostFocus}"
-                                         Background="Transparent" Foreground="{StaticResource TextSecondary}"
-                                         BorderThickness="0,0,0,1" BorderBrush="{StaticResource BorderSubtle}"
+                                         Background="Transparent" Foreground="{DynamicResource TextSecondary}"
+                                         BorderThickness="0,0,0,1" BorderBrush="{DynamicResource BorderSubtle}"
                                          FontSize="10" Padding="2,0" Margin="0,4,0,0"
                                          Tag="{Binding}" LostFocus="OnRuleFieldChanged" />
                             </Grid>
@@ -90,7 +90,7 @@
         </ScrollViewer>
 
         <!-- Nova regra -->
-        <Border Grid.Row="1" Background="{StaticResource BgPanel}"
+        <Border Grid.Row="1" Background="{DynamicResource BgPanel}"
                 CornerRadius="4" Padding="8,6" Margin="0,8,0,0">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -100,12 +100,12 @@
                 </Grid.ColumnDefinitions>
                 <TextBox Grid.Column="0" x:Name="NewName"
                          
-                         Background="{StaticResource BgRow}" Foreground="{StaticResource TextPrimary}"
-                         BorderBrush="{StaticResource BorderSubtle}" Padding="4,3" Margin="0,0,4,0" />
+                         Background="{DynamicResource BgRow}" Foreground="{DynamicResource TextPrimary}"
+                         BorderBrush="{DynamicResource BorderSubtle}" Padding="4,3" Margin="0,0,4,0" />
                 <TextBox Grid.Column="1" x:Name="NewPattern"
                          
-                         Background="{StaticResource BgRow}" Foreground="{StaticResource TextPrimary}"
-                         BorderBrush="{StaticResource BorderSubtle}" FontFamily="Consolas"
+                         Background="{DynamicResource BgRow}" Foreground="{DynamicResource TextPrimary}"
+                         BorderBrush="{DynamicResource BorderSubtle}" FontFamily="Consolas"
                          Padding="4,3" Margin="0,0,4,0" />
                 <Button Grid.Column="2" Content="+ Adicionar"
                         Click="OnAddRule"
@@ -118,7 +118,7 @@
         <StackPanel Grid.Row="2" Orientation="Horizontal"
                     HorizontalAlignment="Right" Margin="0,8,0,0">
             <TextBlock Text="Use {match}, {1} ou {nome} na URL template."
-                       Foreground="{StaticResource TextMuted}" FontSize="10"
+                       Foreground="{DynamicResource TextMuted}" FontSize="10"
                        VerticalAlignment="Center" Margin="0,0,12,0" />
             <Button Content="Cancelar" Click="OnCancel" IsCancel="True"
                     Style="{StaticResource NeutralButtonStyle}" Margin="0,0,8,0" />

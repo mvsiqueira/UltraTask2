@@ -60,6 +60,7 @@ public partial class AppSettingsWindow : Window
         _settings.Theme = ((ThemeCombo.SelectedItem as ComboBoxItem)?.Tag?.ToString()) ?? "dark";
         _settings.LayoutMode = ((LayoutCombo.SelectedItem as ComboBoxItem)?.Tag?.ToString()) ?? "compact";
         Services.PersistenceService.SaveSettings(_settings);
+        Services.ThemeService.Apply(_settings.Theme);
         Services.LayoutService.Apply(_settings.LayoutMode);
         _onLayoutChanged();
 
