@@ -1,17 +1,22 @@
 # UltraTask — Pendências
 
 ## A fazer
-- [ ] Implementar operações em lote
+_(nenhum item pendente no momento)_
 
 ## Feito ✓
+- [x] Operações em lote (barra de ações, + Tag, - Tag, Designado, Contato, Importante, Excluir)
 - [x] Reestilizar janela de Sobre
-- [x] Customização do titlebar
+- [x] Customização do titlebar (app / lista / app—lista / lista—app)
 - [x] Padronizar cores do filtro
-- [x] Ajustar tamanho das janelas
+- [x] Ajustar tamanho das janelas auxiliares (redimensionáveis, centralizadas)
 - [x] Separar linhas de tarefas
 - [x] Tema claro / escuro com troca ao vivo (DynamicResource + ThemeService)
+- [x] F11/F12 de troca de tema funcionam com janelas auxiliares abertas
 - [x] Cor do título, filtro e barra de botões acompanhando o tema
 - [x] Scrollbar fina aderente ao tema
+- [x] Ícone do app: transparente, barras brancas com borda suave, sparkle Ultrasoft dourado
+- [x] Ícones Segoe MDL2 Assets no menu de contexto de tarefas e seções
+- [x] Janela de Notas: toolbar de formatação, remover formatação, checkbox ☐/☒ com cursor hand
 - [x] Popups sem botão na taskbar (ShowInTaskbar="False" nas janelas auxiliares)
 - [x] Crash no seletor de data (substituído por Calendar modal)
 - [x] Data vencida em vermelho na linha da tarefa
