@@ -2,11 +2,11 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Configurações"
-        Width="420" Height="280"
+        Width="420" Height="340"
         Background="{DynamicResource BgDeep}"
         WindowStyle="ToolWindow"
         ShowInTaskbar="False"
-        ResizeMode="NoResize"
+        ResizeMode="CanResize"
         WindowStartupLocation="CenterOwner">
 
     <Window.Resources>
@@ -71,10 +71,25 @@
                        Margin="0,0,0,6" />
             <ComboBox x:Name="LayoutCombo"
                       Style="{StaticResource FilterComboStyle}"
-                      HorizontalAlignment="Left" Width="160">
+                      HorizontalAlignment="Left" Width="160"
+                      Margin="0,0,0,16">
                 <ComboBoxItem Content="Compacto" Tag="compact" />
                 <ComboBoxItem Content="Normal"   Tag="normal" />
                 <ComboBoxItem Content="Estendido" Tag="extended" />
+            </ComboBox>
+
+            <!-- Título na taskbar -->
+            <TextBlock Text="Título na barra de tarefas"
+                       Foreground="{DynamicResource TextPrimary}"
+                       FontSize="12" FontWeight="SemiBold"
+                       Margin="0,0,0,6" />
+            <ComboBox x:Name="TitlebarCombo"
+                      Style="{StaticResource FilterComboStyle}"
+                      HorizontalAlignment="Left" Width="260">
+                <ComboBoxItem Content="Nome do app"                     Tag="app" />
+                <ComboBoxItem Content="Nome da lista"                   Tag="list" />
+                <ComboBoxItem Content="Nome do app — Nome da lista"     Tag="app-list" />
+                <ComboBoxItem Content="Nome da lista — Nome do app"     Tag="list-app" />
             </ComboBox>
 
         </StackPanel>

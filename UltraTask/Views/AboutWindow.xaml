@@ -1,0 +1,131 @@
+<Window x:Class="UltraTask.Views.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Sobre o UltraTask"
+        Width="380" Height="530"
+        ResizeMode="CanResize"
+        WindowStyle="ToolWindow"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource BgDeep}">
+
+    <Grid Margin="32,28,32,24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />  <!-- logo Ultrasoft -->
+            <RowDefinition Height="16" />
+            <RowDefinition Height="Auto" />  <!-- UltraTask + versão -->
+            <RowDefinition Height="8" />
+            <RowDefinition Height="Auto" />  <!-- stack -->
+            <RowDefinition Height="24" />
+            <RowDefinition Height="Auto" />  <!-- separador -->
+            <RowDefinition Height="20" />
+            <RowDefinition Height="Auto" />  <!-- autores -->
+            <RowDefinition Height="20" />
+            <RowDefinition Height="Auto" />  <!-- separador -->
+            <RowDefinition Height="16" />
+            <RowDefinition Height="Auto" />  <!-- build + repo + copyright -->
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />  <!-- botão fechar -->
+        </Grid.RowDefinitions>
+
+        <!-- Logo Ultrasoft: círculo escuro + sparkle dourado + "ULTRASOFT" -->
+        <StackPanel Grid.Row="0" HorizontalAlignment="Center">
+            <Viewbox Width="80" Height="80">
+                <Canvas Width="100" Height="100">
+                    <Ellipse Width="100" Height="100" Fill="#0F2535" />
+                    <!-- sparkle centrado em (50,50), raio 28 -->
+                    <Path Fill="#C89B3C"
+                          Data="M50,22 C52.5,37 63,48 78,50 C63,52 52.5,63 50,78 C47.5,63 37,52 22,50 C37,48 47.5,37 50,22Z" />
+                </Canvas>
+            </Viewbox>
+            <TextBlock Text="U L T R A S O F T"
+                       FontFamily="Segoe UI" FontSize="11" FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextMuted}"
+                       HorizontalAlignment="Center"
+                       Margin="0,8,0,0" />
+        </StackPanel>
+
+        <!-- Nome do app + versão -->
+        <StackPanel Grid.Row="2" HorizontalAlignment="Center">
+            <TextBlock Text="UltraTask"
+                       FontFamily="Segoe UI" FontSize="22" FontWeight="Bold"
+                       Foreground="{DynamicResource TextPrimary}"
+                       HorizontalAlignment="Center" />
+            <TextBlock x:Name="VersionLabel"
+                       FontFamily="Segoe UI" FontSize="12"
+                       Foreground="{DynamicResource TextSecondary}"
+                       HorizontalAlignment="Center" />
+        </StackPanel>
+
+        <!-- Stack tecnológica -->
+        <TextBlock Grid.Row="4"
+                   Text="C# · .NET 10 · WPF"
+                   FontFamily="Segoe UI" FontSize="11"
+                   Foreground="{DynamicResource TextMuted}"
+                   HorizontalAlignment="Center" />
+
+        <!-- Separador -->
+        <Border Grid.Row="6" Height="1" Background="{DynamicResource BorderSubtle}" />
+
+        <!-- Autores -->
+        <StackPanel Grid.Row="8" HorizontalAlignment="Center">
+            <TextBlock Text="Desenvolvido por"
+                       FontFamily="Segoe UI" FontSize="11"
+                       Foreground="{DynamicResource TextMuted}"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,8" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,4">
+                <TextBlock Text="Marcus Siqueira"
+                           FontFamily="Segoe UI" FontSize="12" FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextPrimary}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,4">
+                <TextBlock Text="ChatGPT " FontFamily="Segoe UI" FontSize="12"
+                           Foreground="{DynamicResource TextSecondary}" />
+                <TextBlock Text="&quot;Raj&quot;" FontFamily="Segoe UI" FontSize="12" FontStyle="Italic"
+                           Foreground="{DynamicResource TextMuted}" />
+                <TextBlock Text=" Codex" FontFamily="Segoe UI" FontSize="12"
+                           Foreground="{DynamicResource TextSecondary}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock Text="Claude " FontFamily="Segoe UI" FontSize="12"
+                           Foreground="{DynamicResource TextSecondary}" />
+                <TextBlock Text="&quot;Claudinho&quot;" FontFamily="Segoe UI" FontSize="12" FontStyle="Italic"
+                           Foreground="{DynamicResource TextMuted}" />
+                <TextBlock Text=" Code" FontFamily="Segoe UI" FontSize="12"
+                           Foreground="{DynamicResource TextSecondary}" />
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Separador -->
+        <Border Grid.Row="10" Height="1" Background="{DynamicResource BorderSubtle}" />
+
+        <!-- Build + repositório + copyright -->
+        <StackPanel Grid.Row="12" HorizontalAlignment="Center">
+            <TextBlock x:Name="BuildLabel"
+                       FontFamily="Segoe UI" FontSize="10"
+                       Foreground="{DynamicResource TextMuted}"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,6" />
+            <TextBlock HorizontalAlignment="Center" Margin="0,0,0,6">
+                <Hyperlink x:Name="RepoLink" RequestNavigate="OnRepoLinkClick"
+                           NavigateUri="https://github.com/mvsiqueira/UltraTask2">
+                    <Run Text="github.com/mvsiqueira/UltraTask2"
+                         FontFamily="Segoe UI" FontSize="10" />
+                </Hyperlink>
+            </TextBlock>
+            <TextBlock Text="© 2025 Ultrasoft"
+                       FontFamily="Segoe UI" FontSize="10"
+                       Foreground="{DynamicResource TextMuted}"
+                       HorizontalAlignment="Center" />
+        </StackPanel>
+
+        <!-- Botão fechar -->
+        <Button Grid.Row="14"
+                Content="Fechar" IsDefault="True" IsCancel="True"
+                HorizontalAlignment="Center"
+                Width="100"
+                Click="OnClose"
+                Style="{StaticResource NeutralButtonStyle}" />
+    </Grid>
+</Window>

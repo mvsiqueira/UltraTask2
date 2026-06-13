@@ -1,13 +1,14 @@
 # UltraTask — Pendências
 
-## UI / Estilo
-- [ ] Ajustar tamanho das janelas
-- [ ] Separar linhas de tarefas
-
-## App / Comportamento
-- [ ] Instância única (ao reabrir o app, trazer a janela existente para frente em vez de criar outra)
+## A fazer
+- [ ] Reestilizar janela de Sobre
+- [ ] Implementar operações em lote
 
 ## Feito ✓
+- [x] Customização do titlebar
+- [x] Padronizar cores do filtro
+- [x] Ajustar tamanho das janelas
+- [x] Separar linhas de tarefas
 - [x] Tema claro / escuro com troca ao vivo (DynamicResource + ThemeService)
 - [x] Cor do título, filtro e barra de botões acompanhando o tema
 - [x] Scrollbar fina aderente ao tema

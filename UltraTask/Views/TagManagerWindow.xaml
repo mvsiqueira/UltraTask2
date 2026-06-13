@@ -2,12 +2,13 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Gerenciar Tags"
-        Width="420" Height="500"
-        MinWidth="360" MinHeight="300"
+        Width="460" Height="520"
+        MinWidth="380" MinHeight="320"
         Background="{DynamicResource BgDeep}"
         WindowStyle="ToolWindow"
         ShowInTaskbar="False"
-        ResizeMode="NoResize">
+        ResizeMode="CanResize"
+        WindowStartupLocation="CenterOwner">
 
     <Grid Margin="12">
         <Grid.RowDefinitions>

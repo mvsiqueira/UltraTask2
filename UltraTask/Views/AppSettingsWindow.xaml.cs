@@ -31,8 +31,9 @@ public partial class AppSettingsWindow : Window
             ? "(nenhum arquivo selecionado)"
             : settings.TaskFilePath;
 
-        SelectComboItem(ThemeCombo,  settings.Theme);
-        SelectComboItem(LayoutCombo, settings.LayoutMode);
+        SelectComboItem(ThemeCombo,    settings.Theme);
+        SelectComboItem(LayoutCombo,   settings.LayoutMode);
+        SelectComboItem(TitlebarCombo, settings.TitlebarFormat);
     }
 
     private static void SelectComboItem(ComboBox cb, string tag)
@@ -57,8 +58,9 @@ public partial class AppSettingsWindow : Window
 
     private void OnSave(object sender, RoutedEventArgs e)
     {
-        _settings.Theme = ((ThemeCombo.SelectedItem as ComboBoxItem)?.Tag?.ToString()) ?? "dark";
-        _settings.LayoutMode = ((LayoutCombo.SelectedItem as ComboBoxItem)?.Tag?.ToString()) ?? "compact";
+        _settings.Theme         = ((ThemeCombo.SelectedItem    as ComboBoxItem)?.Tag?.ToString()) ?? "dark";
+        _settings.LayoutMode    = ((LayoutCombo.SelectedItem   as ComboBoxItem)?.Tag?.ToString()) ?? "compact";
+        _settings.TitlebarFormat = ((TitlebarCombo.SelectedItem as ComboBoxItem)?.Tag?.ToString()) ?? "app-list";
         Services.PersistenceService.SaveSettings(_settings);
         Services.ThemeService.Apply(_settings.Theme);
         Services.LayoutService.Apply(_settings.LayoutMode);

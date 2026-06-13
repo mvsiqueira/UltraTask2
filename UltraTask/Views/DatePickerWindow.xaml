@@ -5,7 +5,7 @@
         SizeToContent="WidthAndHeight"
         Background="{DynamicResource BgDeep}"
         WindowStyle="ToolWindow"
-        ResizeMode="NoResize"
+        ResizeMode="CanResize"
         ShowInTaskbar="False"
         WindowStartupLocation="CenterOwner">
 

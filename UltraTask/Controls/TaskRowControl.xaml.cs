@@ -140,11 +140,11 @@ public partial class TaskRowControl : UserControl
 
         // Menu de seção
         var menu = new ContextMenu();
-        menu.Items.Add(MakeMenuItem("Editar", () => { Item.IsEditing = true; Rebuild(); }));
-        menu.Items.Add(MakeMenuItem("Alterar cor", OpenSectionColorPicker));
+        menu.Items.Add(MakeMenuItem("Editar",      () => { Item.IsEditing = true; Rebuild(); },  ""));
+        menu.Items.Add(MakeMenuItem("Alterar cor", OpenSectionColorPicker,                        ""));
         menu.Items.Add(new Separator());
-        menu.Items.Add(MakeMenuItem("Duplicar", () => DuplicateRequested?.Invoke(this, EventArgs.Empty)));
-        menu.Items.Add(MakeMenuItem("Excluir", () => DeleteRequested?.Invoke(this, EventArgs.Empty)));
+        menu.Items.Add(MakeMenuItem("Duplicar",           () => DuplicateRequested?.Invoke(this, EventArgs.Empty), ""));
+        menu.Items.Add(MakeMenuItem("Excluir",            () => DeleteRequested?.Invoke(this, EventArgs.Empty),    ""));
         ContextMenu = menu;
     }
 
@@ -453,28 +453,46 @@ public partial class TaskRowControl : UserControl
     {
         if (Item is null) return;
         var menu = new ContextMenu();
-        menu.Items.Add(MakeMenuItem("Editar título", () => { Item.IsEditing = true; Rebuild(); }));
+        menu.Items.Add(MakeMenuItem("Editar título", () => { Item.IsEditing = true; Rebuild(); }, ""));
         menu.Items.Add(new Separator());
         menu.Items.Add(MakeMenuItem(Item.Important ? "Desmarcar importante" : "Marcar como importante", () =>
         {
             Item.Important = !Item.Important;
             UpdateImportantEar();
             ItemChanged?.Invoke(this, EventArgs.Empty);
-        }));
-        menu.Items.Add(MakeMenuItem("Alterar tags", OpenTagEditor));
-        menu.Items.Add(MakeMenuItem("Definir contato", () => OpenRoleInlineEditByName("contact")));
-        menu.Items.Add(MakeMenuItem("Definir designado", () => OpenRoleInlineEditByName("assignee")));
-        menu.Items.Add(MakeMenuItem("Definir data", () => OpenDatePicker(null)));
-        menu.Items.Add(MakeMenuItem("Notas", OpenNotesWindow));
+        }, Item.Important ? "" : ""));
+        menu.Items.Add(MakeMenuItem("Alterar tags",       OpenTagEditor,                                       ""));
+        menu.Items.Add(MakeMenuItem("Definir designado",  () => OpenRoleInlineEditByName("assignee"),           ""));
+        menu.Items.Add(MakeMenuItem("Definir contato",    () => OpenRoleInlineEditByName("contact"),            ""));
+        menu.Items.Add(MakeMenuItem("Definir data",       () => OpenDatePicker(null),                           ""));
+        menu.Items.Add(MakeMenuItem("Notas",              OpenNotesWindow,                                      ""));
         menu.Items.Add(new Separator());
-        menu.Items.Add(MakeMenuItem("Duplicar", () => DuplicateRequested?.Invoke(this, EventArgs.Empty)));
-        menu.Items.Add(MakeMenuItem("Excluir", () => DeleteRequested?.Invoke(this, EventArgs.Empty)));
+        menu.Items.Add(MakeMenuItem("Duplicar",           () => DuplicateRequested?.Invoke(this, EventArgs.Empty), ""));
+        menu.Items.Add(MakeMenuItem("Excluir",            () => DeleteRequested?.Invoke(this, EventArgs.Empty),    ""));
         ContextMenu = menu;
     }
 
-    private static MenuItem MakeMenuItem(string header, Action action)
+    private static MenuItem MakeMenuItem(string header, Action action, string? mdl2Icon = null)
     {
-        var item = new MenuItem { Header = header };
+        var panel = new StackPanel { Orientation = Orientation.Horizontal };
+        var iconBlock = new TextBlock
+        {
+            Text       = mdl2Icon ?? string.Empty,
+            FontFamily = new System.Windows.Media.FontFamily("Segoe MDL2 Assets"),
+            FontSize   = 13,
+            Width      = 20,
+            TextAlignment = TextAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+        };
+        var textBlock = new TextBlock
+        {
+            Text   = header,
+            Margin = new Thickness(6, 0, 0, 0),
+            VerticalAlignment = VerticalAlignment.Center,
+        };
+        panel.Children.Add(iconBlock);
+        panel.Children.Add(textBlock);
+        var item = new MenuItem { Header = panel };
         item.Click += (_, _) => action();
         return item;
     }

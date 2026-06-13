@@ -3,8 +3,8 @@
 
     <!-- ===== Botões da barra lateral ===== -->
     <Style x:Key="SidebarButtonStyle" TargetType="Button">
-        <Setter Property="Width" Value="44" />
-        <Setter Property="Height" Value="38" />
+        <Setter Property="Width" Value="52" />
+        <Setter Property="Height" Value="44" />
         <Setter Property="Margin" Value="1,1" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="Background" Value="Transparent" />
@@ -34,8 +34,8 @@
 
     <!-- ToggleButton da barra lateral -->
     <Style x:Key="SidebarToggleStyle" TargetType="ToggleButton">
-        <Setter Property="Width" Value="44" />
-        <Setter Property="Height" Value="38" />
+        <Setter Property="Width" Value="52" />
+        <Setter Property="Height" Value="44" />
         <Setter Property="Margin" Value="1,1" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="Background" Value="Transparent" />
@@ -57,6 +57,40 @@
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SidebarHover}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- CheckBox padrão do app — borda usa BorderSubtle -->
+    <Style TargetType="CheckBox">
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border x:Name="Box" Width="13" Height="13" CornerRadius="2"
+                                Background="Transparent"
+                                BorderBrush="{DynamicResource BorderSubtle}"
+                                BorderThickness="1.5"
+                                VerticalAlignment="Center" Margin="0,0,5,0">
+                            <Path x:Name="Check" Visibility="Collapsed"
+                                  Data="M2,6 L5,9 L11,3"
+                                  Stroke="{DynamicResource Accent}" StrokeThickness="1.5"
+                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                  StrokeLineJoin="Round" />
+                        </Border>
+                        <ContentPresenter VerticalAlignment="Center" />
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Check" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource Accent}" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource Accent}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -107,7 +141,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="#2A0A0A" />
+                            <Setter TargetName="Bd" Property="Background" Value="#22EF4444" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -198,7 +232,7 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Foreground" Value="{DynamicResource Danger}" />
-                            <Setter Property="Background" Value="#2A0A0A" />
+                            <Setter Property="Background" Value="#22EF4444" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

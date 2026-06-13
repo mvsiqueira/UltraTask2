@@ -34,4 +34,8 @@ public class AppSettings
 
     [JsonPropertyName("window_state")]
     public string WindowState { get; set; } = "Normal";
+
+    // Formato do título na taskbar: "app", "list", "app-list", "list-app".
+    [JsonPropertyName("titlebar_format")]
+    public string TitlebarFormat { get; set; } = "app-list";
 }

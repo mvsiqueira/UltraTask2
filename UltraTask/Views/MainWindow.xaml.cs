@@ -208,16 +208,13 @@ public partial class MainWindow : Window
     {
         var win = new AppSettingsWindow(Vm.Settings,
             filePath => { Vm.LoadFile(filePath); UpdateStatus(); },
-            () => Vm.LayoutVersion++) { Owner = this };
+            () => { Vm.LayoutVersion++; UpdateStatus(); }) { Owner = this };
         win.ShowDialog();
     }
 
     private void OpenAbout(object sender, RoutedEventArgs e)
     {
-        var stamp = GetBuildStamp();
-        MessageBox.Show(
-            $"UltraTask\nPort WPF do UltraTask Python\nC# · .NET 10 · WPF\n\n{stamp}",
-            "Sobre", MessageBoxButton.OK, MessageBoxImage.Information);
+        new AboutWindow(GetBuildStamp()) { Owner = this }.ShowDialog();
     }
 
     // ===== Eventos dos itens da lista =====
@@ -361,9 +358,16 @@ public partial class MainWindow : Window
         var done  = Vm.AllItems.Count(i => !i.IsSection && i.Completed);
         StatusText.Text  = $"{total} tarefas · {done} concluídas";
         FilePathText.Text = Vm.FilePath;
-        Title = string.IsNullOrEmpty(Vm.FileTitle)
-            ? "UltraTask"
-            : $"UltraTask — {Vm.FileTitle}";
+        var appName  = "UltraTask";
+        var listName = Vm.FileTitle;
+        Title = (Vm.Settings.TitlebarFormat, string.IsNullOrEmpty(listName)) switch
+        {
+            ("list",     false) => listName!,
+            ("list",     true)  => appName,
+            ("app-list", false) => $"{appName} — {listName}",
+            ("list-app", false) => $"{listName} — {appName}",
+            _                   => appName,
+        };
     }
 
     // ===== Abrir / criar arquivo =====

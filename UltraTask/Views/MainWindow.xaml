@@ -19,7 +19,7 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="48" />
+            <ColumnDefinition Width="60" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -89,19 +89,19 @@
             <DockPanel>
                 <Button DockPanel.Dock="Bottom" ToolTip="Sobre"
                         Click="OpenAbout" Style="{StaticResource SidebarButtonStyle}">
-                    <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource SidebarFg}" Text="&#xE946;" />
+                    <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="20" Foreground="{DynamicResource SidebarFg}" Text="&#xE946;" />
                 </Button>
 
                 <StackPanel VerticalAlignment="Top" Margin="0,8,0,0">
                     <Button ToolTip="Adicionar tarefa (Ctrl+N)"
                             Command="{Binding AddTaskCommand}"
                             Style="{StaticResource SidebarButtonStyle}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource SidebarFg}" Text="&#xE710;" />
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="20" Foreground="{DynamicResource SidebarFg}" Text="&#xE710;" />
                     </Button>
                     <Button ToolTip="Adicionar seção"
                             Command="{Binding AddSectionCommand}"
                             Style="{StaticResource SidebarButtonStyle}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource SidebarFg}" Text="&#xECC8;" />
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="20" Foreground="{DynamicResource SidebarFg}" Text="&#xECC8;" />
                     </Button>
 
                     <Separator Margin="4,4" Background="{DynamicResource BorderSubtle}" />
@@ -109,12 +109,12 @@
                     <ToggleButton ToolTip="Operações em lote"
                                   IsChecked="{Binding BatchModeActive}"
                                   Style="{StaticResource SidebarToggleStyle}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource SidebarFg}" Text="&#xE762;" />
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="20" Foreground="{DynamicResource SidebarFg}" Text="&#xE762;" />
                     </ToggleButton>
                     <Button ToolTip="Recarregar arquivo (Ctrl+R)"
                             Command="{Binding ReloadCommand}"
                             Style="{StaticResource SidebarButtonStyle}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource SidebarFg}" Text="&#xE72C;" />
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="20" Foreground="{DynamicResource SidebarFg}" Text="&#xE72C;" />
                     </Button>
 
                     <Separator Margin="4,4" Background="{DynamicResource BorderSubtle}" />
@@ -122,22 +122,22 @@
                     <Button ToolTip="Gerenciar tags"
                             Click="OpenTagManager"
                             Style="{StaticResource SidebarButtonStyle}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource SidebarFg}" Text="&#xE8EC;" />
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="20" Foreground="{DynamicResource SidebarFg}" Text="&#xE8EC;" />
                     </Button>
                     <Button ToolTip="Gerenciar papéis"
                             Click="OpenRoleManager"
                             Style="{StaticResource SidebarButtonStyle}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource SidebarFg}" Text="&#xE77B;" />
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="20" Foreground="{DynamicResource SidebarFg}" Text="&#xE77B;" />
                     </Button>
                     <Button ToolTip="Gerenciar links"
                             Click="OpenLinkManager"
                             Style="{StaticResource SidebarButtonStyle}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource SidebarFg}" Text="&#xE71B;" />
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="20" Foreground="{DynamicResource SidebarFg}" Text="&#xE71B;" />
                     </Button>
                     <Button ToolTip="Propriedades do arquivo"
                             Click="OpenFileProperties"
                             Style="{StaticResource SidebarButtonStyle}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource SidebarFg}" Text="&#xE90F;" />
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="20" Foreground="{DynamicResource SidebarFg}" Text="&#xE90F;" />
                     </Button>
 
                     <Separator Margin="4,4" Background="{DynamicResource BorderSubtle}" />
@@ -145,7 +145,7 @@
                     <Button ToolTip="Configurações do app"
                             Click="OpenAppSettings"
                             Style="{StaticResource SidebarButtonStyle}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource SidebarFg}" Text="&#xE713;" />
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="20" Foreground="{DynamicResource SidebarFg}" Text="&#xE713;" />
                     </Button>
                 </StackPanel>
             </DockPanel>
@@ -190,10 +190,11 @@
                               IsEditable="True"
                               Style="{StaticResource FilterComboStyle}" />
 
-                    <CheckBox Content="Importantes" Margin="0,0,8,0"
+                    <CheckBox Margin="0,0,8,0"
                               IsChecked="{Binding FilterImportantOnly}"
-                              Foreground="{DynamicResource TextSecondary}"
-                              VerticalAlignment="Center" />
+                              VerticalAlignment="Center">
+                        <TextBlock Text="Importantes" Foreground="{DynamicResource TextMuted}" />
+                    </CheckBox>
 
                     <Button Content="X Limpar"
                             Command="{Binding ClearFiltersCommand}"
