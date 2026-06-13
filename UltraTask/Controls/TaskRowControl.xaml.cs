@@ -86,8 +86,9 @@ public partial class TaskRowControl : UserControl
 
         if (Item.IsSection) { RebuildSection(); return; }
 
-        // Linha normal: restaura altura e deixa o RowBorderStyle (DynamicResource) controlar o fundo
+        // Linha normal: restaura altura, borda e deixa o RowBorderStyle (DynamicResource) controlar o fundo
         RowBorder.SetResourceReference(HeightProperty, "RowHeight");
+        RowBorder.BorderThickness = new Thickness(0, 0, 0, 1);
         RowBorder.ClearValue(BackgroundProperty);
         ContentArea.VerticalAlignment = VerticalAlignment.Center;
         ContentArea.Margin = new Thickness(0);
@@ -105,30 +106,20 @@ public partial class TaskRowControl : UserControl
 
     private void RebuildSection()
     {
-        // Seção: fundo diferente, linha colorida, título em destaque
+        // Seção: fundo diferente, linha colorida, título em destaque, sem borda inferior
         RowBorder.SetResourceReference(HeightProperty, "SectionHeight");
         RowBorder.SetResourceReference(BackgroundProperty, "BgSection");
+        RowBorder.BorderThickness = new Thickness(0);
         ImportantEar.Visibility = Visibility.Collapsed;
         DeleteBtn.Visibility = Visibility.Visible;
 
         ContentArea.VerticalAlignment = VerticalAlignment.Bottom;
         ContentArea.Margin = new Thickness(0, 0, 0, 6);
 
-        var line = new Border
-        {
-            Width = 3,
-            Height = 16,
-            Margin = new Thickness(0, 0, 6, 0),
-            CornerRadius = new CornerRadius(1),
-            Background = BrushFromHex(Item!.SectionColor),
-            VerticalAlignment = VerticalAlignment.Bottom,
-        };
-        ContentArea.Items.Add(line);
-
         var editor = new InlineTextEditor
         {
-            Text = Item.Title,
-            FontSize = (double)FindResource("FontSizeBase"),
+            Text = Item!.Title,
+            FontSize = (double)FindResource("FontSizeBase") + 2,
             FontWeight = FontWeights.SemiBold,
             Foreground = BrushFromHex(Item.SectionColor),
             VerticalAlignment = VerticalAlignment.Bottom,

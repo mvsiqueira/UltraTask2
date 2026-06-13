@@ -38,6 +38,68 @@ public partial class MainWindow : Window
 
         if (string.IsNullOrEmpty(Vm.FilePath))
             Dispatcher.BeginInvoke(PromptOpenOrCreate);
+
+        KeyDown += OnGlobalKeyDown;
+        PreviewMouseWheel += OnGlobalMouseWheel;
+    }
+
+    private static readonly string[] Layouts = ["compact", "normal", "extended"];
+
+    private void OnGlobalMouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        if ((Keyboard.Modifiers & ModifierKeys.Control) == 0) return;
+        e.Handled = true; // sempre consome o evento quando Shift está pressionado
+
+        var current = Array.IndexOf(Layouts, Vm.Settings.LayoutMode);
+        if (current < 0) current = 1;
+        var next = Math.Clamp(current + (e.Delta > 0 ? -1 : 1), 0, Layouts.Length - 1);
+        if (next == current) return;
+
+        var mode = Layouts[next];
+        Services.LayoutService.Apply(mode);
+        Vm.Settings.LayoutMode = mode;
+        Services.PersistenceService.SaveSettings(Vm.Settings);
+        Vm.LayoutVersion++;
+    }
+
+    private void OnGlobalKeyDown(object sender, KeyEventArgs e)
+    {
+        switch (e.Key)
+        {
+            case Key.F11:
+                Services.ThemeService.Apply("light");
+                Vm.Settings.Theme = "light";
+                Services.PersistenceService.SaveSettings(Vm.Settings);
+                e.Handled = true;
+                break;
+            case Key.F12:
+                Services.ThemeService.Apply("dark");
+                Vm.Settings.Theme = "dark";
+                Services.PersistenceService.SaveSettings(Vm.Settings);
+                e.Handled = true;
+                break;
+            case Key.F5:
+                Services.LayoutService.Apply("compact");
+                Vm.Settings.LayoutMode = "compact";
+                Services.PersistenceService.SaveSettings(Vm.Settings);
+                Vm.LayoutVersion++;
+                e.Handled = true;
+                break;
+            case Key.F6:
+                Services.LayoutService.Apply("normal");
+                Vm.Settings.LayoutMode = "normal";
+                Services.PersistenceService.SaveSettings(Vm.Settings);
+                Vm.LayoutVersion++;
+                e.Handled = true;
+                break;
+            case Key.F7:
+                Services.LayoutService.Apply("extended");
+                Vm.Settings.LayoutMode = "extended";
+                Services.PersistenceService.SaveSettings(Vm.Settings);
+                Vm.LayoutVersion++;
+                e.Handled = true;
+                break;
+        }
     }
 
     // ===== Geometria da janela =====

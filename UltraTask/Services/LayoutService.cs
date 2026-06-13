@@ -11,9 +11,9 @@ public static class LayoutService
 
     private static readonly Dictionary<string, LayoutValues> Presets = new()
     {
-        ["compact"]  = new(26, 36, 12, 11, new Thickness(0, 0, 0, 0), 3),
-        ["normal"]   = new(34, 44, 13, 12, new Thickness(0, 0, 0, 2), 5),
-        ["extended"] = new(46, 54, 15, 14, new Thickness(0, 0, 0, 2), 8),
+        ["compact"]  = new(26, 36, 12, 11, new Thickness(8, 0, 8, 3), 3),
+        ["normal"]   = new(34, 44, 13, 12, new Thickness(8, 0, 8, 6), 5),
+        ["extended"] = new(46, 54, 15, 14, new Thickness(8, 0, 8, 8), 8),
     };
 
     public static void Apply(string mode)

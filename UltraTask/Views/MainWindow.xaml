@@ -22,28 +22,86 @@
             <ColumnDefinition Width="48" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- CABECALHO (largura total) -->
+        <Border Grid.Row="0" Grid.ColumnSpan="2"
+                Background="{DynamicResource BgHeader}"
+                BorderBrush="{DynamicResource BorderSubtle}"
+                BorderThickness="0,0,0,1"
+                Padding="16,10">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+
+                <!-- Ícone UltraTask: 3 barras brancas transparentes + sparkle Ultrasoft -->
+                <Viewbox Width="36" Height="36" Margin="0,0,12,0" VerticalAlignment="Center">
+                    <Canvas Width="100" Height="100">
+                        <!-- barra 1 -->
+                        <Rectangle Canvas.Left="10" Canvas.Top="13" Width="76" Height="20" RadiusX="7" RadiusY="7"
+                                   Fill="White" Opacity="1" StrokeThickness="1.5" Stroke="#CBD5E1"/>
+                        <Rectangle Canvas.Left="20" Canvas.Top="20" Width="30" Height="3" RadiusX="1.5" RadiusY="1.5"
+                                   Fill="#888888" Opacity="0.25"/>
+                        <Rectangle Canvas.Left="54" Canvas.Top="20" Width="18" Height="3" RadiusX="1.5" RadiusY="1.5"
+                                   Fill="#888888" Opacity="0.18"/>
+                        <!-- barra 2 -->
+                        <Rectangle Canvas.Left="10" Canvas.Top="40" Width="76" Height="20" RadiusX="7" RadiusY="7"
+                                   Fill="White" Opacity="0.65" StrokeThickness="1.5" Stroke="#CBD5E1"/>
+                        <Rectangle Canvas.Left="20" Canvas.Top="47" Width="36" Height="3" RadiusX="1.5" RadiusY="1.5"
+                                   Fill="#888888" Opacity="0.20"/>
+                        <Rectangle Canvas.Left="60" Canvas.Top="47" Width="14" Height="3" RadiusX="1.5" RadiusY="1.5"
+                                   Fill="#888888" Opacity="0.15"/>
+                        <!-- barra 3 -->
+                        <Rectangle Canvas.Left="10" Canvas.Top="67" Width="76" Height="20" RadiusX="7" RadiusY="7"
+                                   Fill="White" Opacity="0.32" StrokeThickness="1.5" Stroke="#CBD5E1"/>
+                        <Rectangle Canvas.Left="20" Canvas.Top="74" Width="24" Height="3" RadiusX="1.5" RadiusY="1.5"
+                                   Fill="#888888" Opacity="0.15"/>
+                        <!-- sparkle Ultrasoft — centrado em (72,73), raio 26 -->
+                        <Path Fill="#C89B3C"
+                              Data="M72,47 C74.3,63.9 81.1,70.7 98,73 C81.1,75.3 74.3,82.1 72,99 C69.7,82.1 62.9,75.3 46,73 C62.9,70.7 69.7,63.9 72,47Z"/>
+                    </Canvas>
+                </Viewbox>
+
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="UltraTask"
+                               FontSize="10"
+                               Foreground="{DynamicResource HeaderFg}"
+                               Opacity="0.55" />
+                    <ctrl:InlineTextEditor
+                        Text="{Binding FileTitle, Mode=TwoWay}"
+                        FontSize="18"
+                        FontWeight="SemiBold"
+                        Foreground="{DynamicResource HeaderFg}"
+                        EditConfirmed="OnFileTitleConfirmed" />
+                </StackPanel>
+
+            </StackPanel>
+        </Border>
 
         <!-- BARRA LATERAL -->
-        <Border Grid.Column="0"
-                Background="{DynamicResource BgPanel}"
+        <Border Grid.Row="1" Grid.RowSpan="2" Grid.Column="0"
+                Background="{DynamicResource BgSidebar}"
                 BorderBrush="{DynamicResource BorderSubtle}"
                 BorderThickness="0,0,1,0">
             <DockPanel>
                 <Button DockPanel.Dock="Bottom" ToolTip="Sobre"
                         Click="OpenAbout" Style="{StaticResource SidebarButtonStyle}">
-                    <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource TextSecondary}" Text="&#xE946;" />
+                    <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource SidebarFg}" Text="&#xE946;" />
                 </Button>
 
                 <StackPanel VerticalAlignment="Top" Margin="0,8,0,0">
                     <Button ToolTip="Adicionar tarefa (Ctrl+N)"
                             Command="{Binding AddTaskCommand}"
                             Style="{StaticResource SidebarButtonStyle}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource TextSecondary}" Text="&#xE710;" />
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource SidebarFg}" Text="&#xE710;" />
                     </Button>
                     <Button ToolTip="Adicionar seção"
                             Command="{Binding AddSectionCommand}"
                             Style="{StaticResource SidebarButtonStyle}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource TextSecondary}" Text="&#xECC8;" />
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource SidebarFg}" Text="&#xECC8;" />
                     </Button>
 
                     <Separator Margin="4,4" Background="{DynamicResource BorderSubtle}" />
@@ -51,12 +109,12 @@
                     <ToggleButton ToolTip="Operações em lote"
                                   IsChecked="{Binding BatchModeActive}"
                                   Style="{StaticResource SidebarToggleStyle}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource TextSecondary}" Text="&#xE762;" />
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource SidebarFg}" Text="&#xE762;" />
                     </ToggleButton>
                     <Button ToolTip="Recarregar arquivo (Ctrl+R)"
                             Command="{Binding ReloadCommand}"
                             Style="{StaticResource SidebarButtonStyle}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource TextSecondary}" Text="&#xE72C;" />
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource SidebarFg}" Text="&#xE72C;" />
                     </Button>
 
                     <Separator Margin="4,4" Background="{DynamicResource BorderSubtle}" />
@@ -64,22 +122,22 @@
                     <Button ToolTip="Gerenciar tags"
                             Click="OpenTagManager"
                             Style="{StaticResource SidebarButtonStyle}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource TextSecondary}" Text="&#xE8EC;" />
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource SidebarFg}" Text="&#xE8EC;" />
                     </Button>
                     <Button ToolTip="Gerenciar papéis"
                             Click="OpenRoleManager"
                             Style="{StaticResource SidebarButtonStyle}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource TextSecondary}" Text="&#xE77B;" />
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource SidebarFg}" Text="&#xE77B;" />
                     </Button>
                     <Button ToolTip="Gerenciar links"
                             Click="OpenLinkManager"
                             Style="{StaticResource SidebarButtonStyle}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource TextSecondary}" Text="&#xE71B;" />
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource SidebarFg}" Text="&#xE71B;" />
                     </Button>
                     <Button ToolTip="Propriedades do arquivo"
                             Click="OpenFileProperties"
                             Style="{StaticResource SidebarButtonStyle}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource TextSecondary}" Text="&#xE90F;" />
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource SidebarFg}" Text="&#xE90F;" />
                     </Button>
 
                     <Separator Margin="4,4" Background="{DynamicResource BorderSubtle}" />
@@ -87,46 +145,21 @@
                     <Button ToolTip="Configurações do app"
                             Click="OpenAppSettings"
                             Style="{StaticResource SidebarButtonStyle}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource TextSecondary}" Text="&#xE713;" />
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{DynamicResource SidebarFg}" Text="&#xE713;" />
                     </Button>
                 </StackPanel>
             </DockPanel>
         </Border>
 
         <!-- AREA PRINCIPAL -->
-        <Grid Grid.Column="1">
+        <Grid Grid.Row="1" Grid.RowSpan="2" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <!-- Cabecalho -->
-            <Border Grid.Row="0"
-                    Background="{DynamicResource BgPanel}"
-                    BorderBrush="{DynamicResource BorderSubtle}"
-                    BorderThickness="0,0,0,1"
-                    Padding="12,6">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-
-                    <ctrl:InlineTextEditor Grid.Column="0"
-                                           Text="{Binding FileTitle, Mode=TwoWay}"
-                                           FontSize="22"
-                                           FontWeight="SemiBold"
-                                           Foreground="{DynamicResource TextPrimary}"
-                                           VerticalAlignment="Center"
-                                           EditConfirmed="OnFileTitleConfirmed" />
-
-                </Grid>
-            </Border>
-
             <!-- Linha de filtros -->
-            <Border Grid.Row="1"
+            <Border Grid.Row="0"
                     Background="{DynamicResource BgPanel}"
                     BorderBrush="{DynamicResource BorderSubtle}"
                     BorderThickness="0,0,0,1"
@@ -171,11 +204,11 @@
             </Border>
 
             <!-- Lista principal com overlay de drop -->
-            <Grid Grid.Row="2">
+            <Grid Grid.Row="1">
                 <ScrollViewer x:Name="MainScroll"
                               VerticalScrollBarVisibility="Auto"
                               HorizontalScrollBarVisibility="Disabled"
-                              Background="{DynamicResource BgDeep}">
+                              Background="{DynamicResource BgSection}">
                     <ItemsControl x:Name="TaskList"
                                   ItemsSource="{Binding FilteredItems}">
                         <ItemsControl.ItemsPanel>
@@ -216,39 +249,41 @@
                 </Canvas>
             </Grid>
 
-            <!-- Barra de status -->
-            <Border Grid.Row="3"
-                    Background="{DynamicResource BgPanel}"
-                    BorderBrush="{DynamicResource BorderSubtle}"
-                    BorderThickness="0,1,0,0"
-                    Padding="8,2">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+        </Grid>
 
-                    <StackPanel Grid.Column="0" Orientation="Horizontal">
-                        <TextBlock x:Name="StatusText"
-                                   Foreground="{DynamicResource TextMuted}"
-                                   FontSize="10"
-                                   VerticalAlignment="Center" />
-                        <TextBlock x:Name="FilePathText"
-                                   Foreground="{DynamicResource TextMuted}"
-                                   FontSize="10"
-                                   Opacity="0.6"
-                                   VerticalAlignment="Center"
-                                   Margin="12,0,0,0" />
-                    </StackPanel>
+        <!-- BARRA DE STATUS (largura total) -->
+        <Border Grid.Row="3" Grid.ColumnSpan="2"
+                Background="{DynamicResource BgPanel}"
+                BorderBrush="{DynamicResource BorderSubtle}"
+                BorderThickness="0,1,0,0"
+                Padding="8,2">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Column="1"
-                               x:Name="BuildStamp"
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock x:Name="StatusText"
                                Foreground="{DynamicResource TextMuted}"
                                FontSize="10"
                                VerticalAlignment="Center" />
-                </Grid>
-            </Border>
+                    <TextBlock x:Name="FilePathText"
+                               Foreground="{DynamicResource TextMuted}"
+                               FontSize="10"
+                               Opacity="0.6"
+                               VerticalAlignment="Center"
+                               Margin="12,0,0,0" />
+                </StackPanel>
 
-        </Grid>
+                <TextBlock Grid.Column="1"
+                           x:Name="BuildStamp"
+                           Foreground="{DynamicResource TextMuted}"
+                           FontSize="10"
+                           VerticalAlignment="Center" />
+            </Grid>
+        </Border>
+
     </Grid>
 </Window>
+
