@@ -1,12 +1,16 @@
 # UltraTask — Pendências
 
 ## UI / Estilo
-- [ ] Tema claro / escuro (implementar efeito visual — estrutura já existe em AppSettings)
 - [ ] Ajustar tamanho das janelas
-- [ ] Alterar cor do título, filtro e barra de botões
 - [ ] Separar linhas de tarefas
 
+## App / Comportamento
+- [ ] Instância única (ao reabrir o app, trazer a janela existente para frente em vez de criar outra)
+
 ## Feito ✓
+- [x] Tema claro / escuro com troca ao vivo (DynamicResource + ThemeService)
+- [x] Cor do título, filtro e barra de botões acompanhando o tema
+- [x] Scrollbar fina aderente ao tema
 - [x] Popups sem botão na taskbar (ShowInTaskbar="False" nas janelas auxiliares)
 - [x] Crash no seletor de data (substituído por Calendar modal)
 - [x] Data vencida em vermelho na linha da tarefa
