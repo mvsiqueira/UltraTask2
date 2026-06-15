@@ -18,5 +18,12 @@ public class TagEntry
     [JsonPropertyName("size")]
     public string Size { get; set; } = string.Empty;
 
-    public TagEntry Clone() => new() { Name = Name, Color = Color, Order = Order, Size = Size };
+    // "rótulo" | "balão" | "faixa"
+    [JsonPropertyName("style")]
+    public string Style { get; set; } = "rótulo";
+
+    [JsonPropertyName("font")]
+    public string Font { get; set; } = "Segoe UI";
+
+    public TagEntry Clone() => new() { Name = Name, Color = Color, Order = Order, Size = Size, Style = Style, Font = Font };
 }

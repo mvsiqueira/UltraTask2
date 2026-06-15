@@ -3,12 +3,12 @@ using System.Windows.Media;
 
 namespace UltraTask.Controls;
 
-// Chip de papel (Contato ou Designado) — suporta estilo "tag" (cantos retos) e "balloon" (pill).
+// Chip de papel (Contato ou Designado) — suporta estilo "rótulo" (cantos retos) e "balão" (pill).
 public partial class RoleChipControl : System.Windows.Controls.UserControl
 {
     public string Value      { get; set; } = string.Empty;
     public string RoleColor  { get; set; } = "#0F766E";
-    public string RoleStyle  { get; set; } = "balloon"; // "tag" | "balloon"
+    public string RoleStyle  { get; set; } = "balão"; // "rótulo" | "balão"
     public string RolePrefix { get; set; } = string.Empty;
     public string RoleFont   { get; set; } = "Segoe UI";
     public string RoleSize   { get; set; } = string.Empty;
@@ -23,19 +23,29 @@ public partial class RoleChipControl : System.Windows.Controls.UserControl
     {
         ChipBorder.Background = BrushFromHex(RoleColor);
 
-        // Estilo balloon = pill (raio grande), tag = raio mínimo
-        ChipBorder.CornerRadius = RoleStyle == "balloon"
-            ? (CornerRadius)FindResource("BalloonRadius")
-            : (CornerRadius)FindResource("ChipRadius");
-
         var text = string.IsNullOrEmpty(RolePrefix) ? Value : $"{RolePrefix} {Value}";
         ChipLabel.Text = text;
         ChipLabel.FontFamily = new FontFamily(RoleFont);
-
-        // Cor do texto: branco ou preto dependendo da luminância do fundo
         ChipLabel.Foreground = GetContrastForeground(RoleColor);
+        ChipLabel.VerticalAlignment = VerticalAlignment.Center;
 
-        // Largura fixa opcional
+        if (RoleStyle == "faixa")
+        {
+            VerticalAlignment = VerticalAlignment.Center;
+            SetResourceReference(HeightProperty, "RowHeight");
+            ChipBorder.CornerRadius = new CornerRadius(0);
+            ChipBorder.Padding = new Thickness(6, 0, 6, 0);
+            ChipBorder.VerticalAlignment = VerticalAlignment.Stretch;
+        }
+        else
+        {
+            VerticalAlignment = VerticalAlignment.Center;
+            ChipBorder.CornerRadius = RoleStyle == "balão"
+                ? (CornerRadius)FindResource("BalloonRadius")
+                : (CornerRadius)FindResource("ChipRadius");
+            ChipBorder.Padding = (Thickness)FindResource("ChipPadding");
+        }
+
         if (int.TryParse(RoleSize, out int chars) && chars > 0)
         {
             ChipLabel.Width = chars * 7.0;

@@ -4,6 +4,14 @@
 _(nenhum item pendente no momento)_
 
 ## Feito ✓
+- [x] Campo Pendência na linha de tarefa (chip configurável, edição inline, menu de contexto)
+- [x] Estilos de chip: rótulo, balão e faixa (ocupa toda a altura da linha)
+- [x] Estilo faixa disponível para tags e papéis
+- [x] Fonte configurável por tag (cadastro e edição)
+- [x] Spacer: campos após o espaço ficam alinhados à direita da linha
+- [x] Seletor de cor nativo do Windows com paleta pré-carregada (HSL, sliders de intensidade)
+- [x] Gerenciar Papéis: preview clicável navega para a aba correspondente
+- [x] Popup de seleção de tag: tags não aplicadas com fonte branca
 - [x] Operações em lote (barra de ações, + Tag, - Tag, Designado, Contato, Importante, Excluir)
 - [x] Reestilizar janela de Sobre
 - [x] Customização do titlebar (app / lista / app—lista / lista—app)

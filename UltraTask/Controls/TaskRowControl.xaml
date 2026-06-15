@@ -66,16 +66,14 @@
                       Unchecked="OnBatchCheckChanged" />
 
             <!-- Área de conteúdo — montada dinamicamente via task_row_order -->
-            <ItemsControl Grid.Column="3"
-                          x:Name="ContentArea"
-                          VerticalAlignment="Center"
-                          Padding="2,0">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
+            <Grid Grid.Column="3" x:Name="ContentArea" Margin="2,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel x:Name="LeftArea"  Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Stretch" />
+                <StackPanel x:Name="RightArea" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Stretch" />
+            </Grid>
 
             <!-- Botão excluir (visível ao hover) -->
             <Button Grid.Column="4"

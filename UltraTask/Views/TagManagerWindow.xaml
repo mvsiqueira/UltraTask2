@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Gerenciar Tags"
-        Width="460" Height="520"
+        Width="560" Height="520"
         MinWidth="380" MinHeight="320"
         Background="{DynamicResource BgDeep}"
         WindowStyle="ToolWindow"
@@ -20,10 +20,12 @@
         <!-- Formulário de nova tag -->
         <Border Grid.Row="0"
                 Background="{DynamicResource BgPanel}"
-                CornerRadius="4" Padding="10,8" Margin="0,0,0,8">
+                CornerRadius="4" Padding="8,4" Margin="0,0,0,8">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -38,7 +40,6 @@
                          KeyDown="OnNewTagKeyDown" />
 
                 <TextBox Grid.Column="1" x:Name="NewTagSize"
-                         
                          Width="40"
                          Background="{DynamicResource BgRow}"
                          Foreground="{DynamicResource TextPrimary}"
@@ -46,14 +47,30 @@
                          Padding="4,3" Margin="0,0,6,0"
                          ToolTip="Largura fixa em caracteres (vazio = auto)" />
 
+                <ComboBox Grid.Column="2" x:Name="NewTagStyle" Grid.Row="0"
+                          Width="70"
+                          Background="{DynamicResource BgRow}"
+                          Foreground="{DynamicResource TextPrimary}"
+                          BorderBrush="{DynamicResource BorderSubtle}"
+                          Padding="4,3" Margin="0,0,6,0"
+                          SelectedIndex="0" />
+
+                <ComboBox Grid.Column="3" x:Name="NewTagFont"
+                          Width="90"
+                          Background="{DynamicResource BgRow}"
+                          Foreground="{DynamicResource TextPrimary}"
+                          BorderBrush="{DynamicResource BorderSubtle}"
+                          Padding="4,3" Margin="0,0,6,0"
+                          SelectedIndex="0" />
+
                 <!-- Swatch de cor -->
-                <Border Grid.Column="2" x:Name="ColorSwatch"
+                <Border Grid.Column="4" x:Name="ColorSwatch"
                         Width="24" Height="24" CornerRadius="3"
                         Background="#2563EB" Margin="0,0,6,0"
                         Cursor="Hand" MouseLeftButtonDown="OnPickColor"
                         ToolTip="Clique para escolher cor" />
 
-                <Button Grid.Column="3" Content="+ Adicionar"
+                <Button Grid.Column="5" Content="+ Adicionar"
                         Click="OnAddTag"
                         Style="{StaticResource SidebarButtonStyle}"
                         Width="Auto" Padding="8,0" />
@@ -75,6 +92,7 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="40" />
                                     <ColumnDefinition Width="62" />
+                                    <ColumnDefinition Width="82" />
                                     <ColumnDefinition Width="22" />
                                     <ColumnDefinition Width="22" />
                                     <ColumnDefinition Width="22" />
@@ -111,16 +129,26 @@
                                          Tag="{Binding}"
                                          LostFocus="OnTagSizeChanged" />
 
-                                <!-- Cor hex display -->
-                                <TextBlock Grid.Column="3"
-                                           Text="{Binding Color}"
-                                           FontSize="9"
-                                           Foreground="{DynamicResource TextMuted}"
-                                           VerticalAlignment="Center"
-                                           HorizontalAlignment="Center" />
+                                <!-- Estilo -->
+                                <ComboBox Grid.Column="3"
+                                          x:Name="StyleCombo"
+                                          Tag="{Binding}"
+                                          FontSize="10"
+                                          Padding="3,1"
+                                          Margin="0,0,4,0"
+                                          SelectionChanged="OnTagStyleChanged" />
+
+                                <!-- Fonte -->
+                                <ComboBox Grid.Column="4"
+                                          x:Name="FontCombo"
+                                          Tag="{Binding}"
+                                          FontSize="10"
+                                          Padding="3,1"
+                                          Margin="0,0,4,0"
+                                          SelectionChanged="OnTagFontChanged" />
 
                                 <!-- Mover para cima -->
-                                <Button Grid.Column="4" Content="↑"
+                                <Button Grid.Column="5" Content="↑"
                                         FontSize="11"
                                         Tag="{Binding}"
                                         Style="{StaticResource SidebarButtonStyle}"
@@ -128,7 +156,7 @@
                                         Click="OnMoveUp" />
 
                                 <!-- Mover para baixo -->
-                                <Button Grid.Column="5" Content="↓"
+                                <Button Grid.Column="6" Content="↓"
                                         FontSize="11"
                                         Tag="{Binding}"
                                         Style="{StaticResource SidebarButtonStyle}"
@@ -136,7 +164,7 @@
                                         Click="OnMoveDown" />
 
                                 <!-- Excluir -->
-                                <Button Grid.Column="6" Content="×"
+                                <Button Grid.Column="7" Content="×"
                                         FontSize="13"
                                         Tag="{Binding}"
                                         Style="{StaticResource DangerButtonStyle}"

@@ -9,13 +9,14 @@ public partial class FilePropertiesWindow : Window
 {
     private static readonly (string Key, string Label)[] AllTokens =
     [
-        ("tags",     "Tags"),
-        ("assignee", "Designado"),
-        ("contact",  "Contato"),
-        ("title",    "Título"),
-        ("notes",    "Notas"),
-        ("spacer",   "Espaço"),
-        ("date",     "Data"),
+        ("tags",      "Tags"),
+        ("assignee",  "Designado"),
+        ("contact",   "Contato"),
+        ("title",     "Título"),
+        ("pendencia", "Pendência"),
+        ("notes",     "Notas"),
+        ("spacer",    "Espaço"),
+        ("date",      "Data"),
     ];
 
     private readonly TaskFile _file;
@@ -107,8 +108,7 @@ public partial class FilePropertiesWindow : Window
         var result = _state.Where(s => s.Active).Select(s => s.Key).ToList();
         if (!result.Contains("title")) result.Add("title");
 
-        _file.TaskRowOrder.Clear();
-        _file.TaskRowOrder.AddRange(result);
+        _file.TaskRowOrder = result;
         _onSave();
         Close();
     }

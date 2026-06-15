@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using UltraTask.Services;
@@ -8,8 +9,13 @@ namespace UltraTask;
 
 public partial class App : Application
 {
+    [DllImport("shell32.dll")]
+    private static extern void SetCurrentProcessExplicitAppUserModelID(
+        [MarshalAs(UnmanagedType.LPWStr)] string appId);
+
     protected override void OnStartup(StartupEventArgs e)
     {
+        SetCurrentProcessExplicitAppUserModelID("Ultrasoft.UltraTask");
         base.OnStartup(e);
         EventManager.RegisterClassHandler(
             typeof(Window),

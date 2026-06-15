@@ -42,6 +42,10 @@ public partial class TaskItemViewModel : ObservableObject
     partial void OnAssigneeChanged(string value) => Model.Assignee = value;
 
     [ObservableProperty]
+    private string _pendencia = string.Empty;
+    partial void OnPendenciaChanged(string value) => Model.Pendencia = value;
+
+    [ObservableProperty]
     private string _sectionColor = "#B45309";
     partial void OnSectionColorChanged(string value) => Model.SectionColor = value;
 
@@ -71,6 +75,7 @@ public partial class TaskItemViewModel : ObservableObject
         DueDate   = Model.DueDate;
         Contact   = Model.Contact;
         Assignee  = Model.Assignee;
+        Pendencia = Model.Pendencia;
         SectionColor = Model.SectionColor;
         OnPropertyChanged(nameof(HasNotes));
         OnPropertyChanged(nameof(TagNames));

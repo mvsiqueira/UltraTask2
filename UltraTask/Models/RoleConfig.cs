@@ -8,9 +8,9 @@ public class RoleEntry
     [JsonPropertyName("color")]
     public string Color { get; set; } = "#0F766E";
 
-    // "tag" ou "balloon"
+    // "rótulo" ou "balão"
     [JsonPropertyName("style")]
-    public string Style { get; set; } = "balloon";
+    public string Style { get; set; } = "balão";
 
     // Prefixo textual; string vazia é permitido.
     [JsonPropertyName("prefix")]
@@ -26,7 +26,7 @@ public class RoleEntry
     public RoleEntry Clone() => new() { Color = Color, Style = Style, Prefix = Prefix, Font = Font, Size = Size };
 }
 
-// Agrupa as configurações dos dois papéis configuráveis.
+// Agrupa as configurações dos papéis configuráveis.
 public class RoleConfig
 {
     [JsonPropertyName("contact")]
@@ -34,4 +34,7 @@ public class RoleConfig
 
     [JsonPropertyName("assignee")]
     public RoleEntry Assignee { get; set; } = new() { Color = "#7C3AED", Prefix = "→" };
+
+    [JsonPropertyName("pendencia")]
+    public RoleEntry Pendencia { get; set; } = new() { Color = "#B45309", Prefix = "⚠" };
 }

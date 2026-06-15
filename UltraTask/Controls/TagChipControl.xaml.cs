@@ -9,7 +9,9 @@ public partial class TagChipControl : System.Windows.Controls.UserControl
 {
     public string TagName  { get; set; } = string.Empty;
     public string TagColor { get; set; } = "#2563EB";
-    public string TagSize  { get; set; } = string.Empty; // em chars; vazio = auto
+    public string TagSize  { get; set; } = string.Empty;
+    public string TagStyle { get; set; } = "rótulo"; // "rótulo" | "balão" | "faixa"
+    public string TagFont  { get; set; } = "Segoe UI";
 
     // Evento para o pai aplicar filtro por essa tag (clique direito).
     public event EventHandler<string>? FilterRequested;
@@ -23,11 +25,29 @@ public partial class TagChipControl : System.Windows.Controls.UserControl
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
         ChipLabel.Text = TagName;
+        ChipLabel.FontFamily = new FontFamily(TagFont);
+        ChipLabel.VerticalAlignment = VerticalAlignment.Center;
         var bg = BrushFromHex(TagColor);
         ChipBorder.Background = bg;
         ChipLabel.Foreground = ContrastBrush(bg.Color);
 
-        // Largura fixa opcional: converte caracteres → pixels (aprox 7px/char)
+        if (TagStyle == "faixa")
+        {
+            VerticalAlignment = VerticalAlignment.Center;
+            SetResourceReference(HeightProperty, "RowHeight");
+            ChipBorder.CornerRadius = new System.Windows.CornerRadius(0);
+            ChipBorder.Padding = new System.Windows.Thickness(6, 0, 6, 0);
+            ChipBorder.VerticalAlignment = VerticalAlignment.Stretch;
+        }
+        else
+        {
+            VerticalAlignment = VerticalAlignment.Center;
+            ChipBorder.CornerRadius = TagStyle == "balão"
+                ? (System.Windows.CornerRadius)FindResource("BalloonRadius")
+                : (System.Windows.CornerRadius)FindResource("ChipRadius");
+            ChipBorder.Padding = (System.Windows.Thickness)FindResource("ChipPadding");
+        }
+
         if (int.TryParse(TagSize, out int chars) && chars > 0)
         {
             ChipLabel.Width = chars * 7.0;

@@ -204,6 +204,7 @@ public partial class MainWindow : Window
         var win = new FilePropertiesWindow(Vm.CurrentFile, () =>
         {
             Vm.OnPropertyChanged(nameof(Vm.TaskRowOrder));
+            Vm.LayoutVersion++;
             Vm.ScheduleSave();
         }) { Owner = this };
         win.ShowDialog();

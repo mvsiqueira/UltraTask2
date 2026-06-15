@@ -15,6 +15,7 @@ public partial class RoleManagerWindow : Window
     private string _activeRole = "contact";
     private RoleEntry _contactSnapshot = new();
     private RoleEntry _assigneeSnapshot = new();
+    private RoleEntry _pendenciaSnapshot = new();
 
     public RoleManagerWindow(RoleConfig config, Action onChanged)
     {
@@ -23,8 +24,10 @@ public partial class RoleManagerWindow : Window
         _onChanged = onChanged;
         _contactSnapshot = config.Contact.Clone();
         _assigneeSnapshot = config.Assignee.Clone();
+        _pendenciaSnapshot = config.Pendencia.Clone();
         BuildPanel(ContactPanel, config.Contact);
         BuildPanel(AssigneePanel, config.Assignee);
+        BuildPanel(PendenciaPanel, config.Pendencia);
         UpdatePreview();
     }
 
@@ -79,12 +82,12 @@ public partial class RoleManagerWindow : Window
 
         swatch.MouseLeftButtonDown += (_, _) =>
         {
-            var dlg = new ColorPickerDialog(role.Color) { Owner = this };
-            if (dlg.ShowDialog() == true)
+            var picked = ColorPickerDialog.Pick(role.Color, this);
+            if (picked is not null)
             {
-                role.Color = dlg.SelectedColor;
-                hex.Text = dlg.SelectedColor;
-                try { swatch.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(dlg.SelectedColor)); }
+                role.Color = picked;
+                hex.Text = picked;
+                try { swatch.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(picked)); }
                 catch { }
                 onChange();
             }
@@ -104,12 +107,13 @@ public partial class RoleManagerWindow : Window
             BorderBrush = new SolidColorBrush(Color.FromRgb(0x37, 0x41, 0x51)),
             FontSize = 11, Height = 24,
         };
-        cb.Items.Add("balloon");
-        cb.Items.Add("tag");
-        cb.SelectedItem = role.Style == "balloon" ? "balloon" : "tag";
+        cb.Items.Add("balão");
+        cb.Items.Add("rótulo");
+        cb.Items.Add("faixa");
+        cb.SelectedItem = role.Style is "balão" or "rótulo" or "faixa" ? role.Style : "balão";
         cb.SelectionChanged += (_, _) =>
         {
-            role.Style = cb.SelectedItem?.ToString() ?? "balloon";
+            role.Style = cb.SelectedItem?.ToString() ?? "balão";
             onChange();
         };
         return cb;
@@ -135,17 +139,18 @@ public partial class RoleManagerWindow : Window
         return cb;
     }
 
-    private static TextBox MakeTextInput(string initial, Action<string> onChange, double width = double.NaN)
+    private TextBox MakeTextInput(string initial, Action<string> onChange, double width = double.NaN)
     {
         var tb = new TextBox
         {
             Text = initial,
-            Background = new SolidColorBrush(Color.FromRgb(0x1F, 0x29, 0x37)),
-            Foreground = Brushes.White,
-            BorderBrush = new SolidColorBrush(Color.FromRgb(0x37, 0x41, 0x51)),
             Padding = new Thickness(4, 2, 4, 2),
             FontSize = 11, Height = 24,
         };
+        tb.SetResourceReference(TextBox.BackgroundProperty, "BgPanel");
+        tb.SetResourceReference(TextBox.ForegroundProperty, "TextPrimary");
+        tb.SetResourceReference(TextBox.BorderBrushProperty, "BorderSubtle");
+        tb.SetResourceReference(TextBox.CaretBrushProperty, "TextPrimary");
         if (!double.IsNaN(width)) tb.Width = width;
         tb.TextChanged += (_, _) => onChange(tb.Text);
         return tb;
@@ -155,7 +160,12 @@ public partial class RoleManagerWindow : Window
     {
         PreviewPanel.Children.Clear();
 
-        foreach (var (role, value) in new[] { (_config.Assignee, "Designado"), (_config.Contact, "Contato") })
+        foreach (var (role, value, tabTag) in new[]
+        {
+            (_config.Assignee, "Designado",        "assignee"),
+            (_config.Contact,  "Contato",           "contact"),
+            (_config.Pendencia,"Aguardando retorno","pendencia"),
+        })
         {
             var chip = new RoleChipControl
             {
@@ -166,8 +176,24 @@ public partial class RoleManagerWindow : Window
                 RoleFont = role.Font,
                 RoleSize = role.Size,
                 Margin = new Thickness(0, 0, 8, 0),
+                Cursor = Cursors.Hand,
+                ToolTip = $"Editar {value}",
             };
+            var tag = tabTag;
+            chip.MouseLeftButtonDown += (_, _) => SelectTab(tag);
             PreviewPanel.Children.Add(chip);
+        }
+    }
+
+    private void SelectTab(string tag)
+    {
+        foreach (TabItem tab in Tabs.Items)
+        {
+            if (tab.Tag?.ToString() == tag)
+            {
+                Tabs.SelectedItem = tab;
+                break;
+            }
         }
     }
 
@@ -189,6 +215,7 @@ public partial class RoleManagerWindow : Window
     {
         ApplySnapshot(_config.Contact, _contactSnapshot);
         ApplySnapshot(_config.Assignee, _assigneeSnapshot);
+        ApplySnapshot(_config.Pendencia, _pendenciaSnapshot);
         _onChanged();
         Close();
     }

@@ -70,10 +70,10 @@ public partial class NotesWindow : Window
 
     private void OnPickTextColor(object sender, RoutedEventArgs e)
     {
-        var dlg = new ColorPickerDialog(_currentTextColor) { Owner = this };
-        if (dlg.ShowDialog() != true) return;
+        var picked = ColorPickerDialog.Pick(_currentTextColor, this);
+        if (picked is null) return;
 
-        _currentTextColor = dlg.SelectedColor;
+        _currentTextColor = picked;
         try { TextColorBar.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(_currentTextColor)); }
         catch { }
 
@@ -88,10 +88,10 @@ public partial class NotesWindow : Window
 
     private void OnPickBgColor(object sender, RoutedEventArgs e)
     {
-        var dlg = new ColorPickerDialog(_currentBgColor) { Owner = this };
-        if (dlg.ShowDialog() != true) return;
+        var picked = ColorPickerDialog.Pick(_currentBgColor, this);
+        if (picked is null) return;
 
-        _currentBgColor = dlg.SelectedColor;
+        _currentBgColor = picked;
         try { BgColorBar.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(_currentBgColor)); }
         catch { }
 

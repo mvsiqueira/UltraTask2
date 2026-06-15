@@ -13,9 +13,9 @@ public class TaskFile
     public List<TaskItem> Tasks { get; set; } = [];
 
     // Ordem visual dos tokens da linha de tarefa.
-    // Tokens válidos: tags, assignee, contact, title, notes, spacer, date.
+    // Tokens válidos: tags, assignee, contact, title, pendencia, notes, spacer, date.
     [JsonPropertyName("task_row_order")]
-    public List<string> TaskRowOrder { get; set; } = ["tags", "assignee", "contact", "title", "notes", "spacer", "date"];
+    public List<string> TaskRowOrder { get; set; } = ["tags", "assignee", "contact", "title", "pendencia", "notes", "spacer", "date"];
 
     [JsonPropertyName("role_config")]
     public RoleConfig RoleConfig { get; set; } = new();

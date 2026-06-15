@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using UltraTask.Models;
+using System.Linq;
 
 namespace UltraTask.Views;
 
@@ -14,15 +15,22 @@ public partial class TagManagerWindow : Window
     private string _pendingColor = "#2563EB";
     private List<TagEntry> _snapshot = [];
 
+    private static readonly string[] Styles = ["rótulo", "balão", "faixa"];
+    private static readonly string[] Fonts  = ["Segoe UI", "Consolas", "Courier New", "Verdana", "Arial", "Tahoma"];
+
     public TagManagerWindow(List<TagEntry> tags, Action onChanged)
     {
         InitializeComponent();
         _tags = tags;
         _onChanged = onChanged;
         _snapshot = tags.Select(t => t.Clone()).ToList();
-        RefreshList();
 
-        // Exibe cor atual no swatch de nova tag
+        foreach (var s in Styles) NewTagStyle.Items.Add(s);
+        NewTagStyle.SelectedIndex = 0;
+        foreach (var f in Fonts) NewTagFont.Items.Add(f);
+        NewTagFont.SelectedIndex = 0;
+
+        RefreshList();
         UpdateNewSwatch();
     }
 
@@ -33,6 +41,37 @@ public partial class TagManagerWindow : Window
     {
         TagList.ItemsSource = null;
         TagList.ItemsSource = _tags.OrderBy(t => t.Order).ToList();
+
+        // Inicializa combos de estilo e fonte em cada linha
+        // Usa Background para garantir que o DataBind resolveu Tag="{Binding}" antes de acessar item.Tag
+        Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
+        {
+            foreach (var item in FindVisualChildren<ComboBox>(TagList))
+            {
+                if (item.Tag is not TagEntry tag || item.Items.Count != 0) continue;
+                if (item.Name == "StyleCombo")
+                {
+                    foreach (var s in Styles) item.Items.Add(s);
+                    item.SelectedItem = Styles.Contains(tag.Style) ? tag.Style : "rótulo";
+                }
+                else if (item.Name == "FontCombo")
+                {
+                    foreach (var f in Fonts) item.Items.Add(f);
+                    item.SelectedItem = Fonts.Contains(tag.Font) ? tag.Font : "Segoe UI";
+                }
+            }
+        });
+    }
+
+    private static IEnumerable<T> FindVisualChildren<T>(System.Windows.DependencyObject parent) where T : System.Windows.DependencyObject
+    {
+        int count = System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent);
+        for (int i = 0; i < count; i++)
+        {
+            var child = System.Windows.Media.VisualTreeHelper.GetChild(parent, i);
+            if (child is T t) yield return t;
+            foreach (var sub in FindVisualChildren<T>(child)) yield return sub;
+        }
     }
 
     // --- Nova tag ---
@@ -62,6 +101,8 @@ public partial class TagManagerWindow : Window
             Color = _pendingColor,
             Order = _tags.Count,
             Size = NewTagSize.Text.Trim(),
+            Style = NewTagStyle.SelectedItem?.ToString() ?? "rótulo",
+            Font = NewTagFont.SelectedItem?.ToString() ?? "Segoe UI",
         });
 
         NewTagName.Text = string.Empty;
@@ -121,6 +162,24 @@ public partial class TagManagerWindow : Window
         if (sender is TextBox tb && tb.Tag is TagEntry tag)
         {
             tag.Size = tb.Text.Trim();
+            _onChanged();
+        }
+    }
+
+    private void OnTagStyleChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is ComboBox cb && cb.Tag is TagEntry tag && cb.SelectedItem is string style)
+        {
+            tag.Style = style;
+            _onChanged();
+        }
+    }
+
+    private void OnTagFontChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is ComboBox cb && cb.Tag is TagEntry tag && cb.SelectedItem is string font)
+        {
+            tag.Font = font;
             _onChanged();
         }
     }
@@ -185,11 +244,6 @@ public partial class TagManagerWindow : Window
 
     private void OnSave(object sender, RoutedEventArgs e) => Close();
 
-    // Seletor de cor simples via input de hex
-    private static string? PickColor(string current)
-    {
-        var dlg = new ColorPickerDialog(current);
-        dlg.Owner = Application.Current.MainWindow;
-        return dlg.ShowDialog() == true ? dlg.SelectedColor : null;
-    }
+    private string? PickColor(string current) =>
+        ColorPickerDialog.Pick(current, this);
 }

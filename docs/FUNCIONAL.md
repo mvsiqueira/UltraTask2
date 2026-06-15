@@ -2,7 +2,7 @@
 
 **Versão:** 2.0.0  
 **Plataforma:** Windows 10/11  
-**Atualizado:** 2026-06-13
+**Atualizado:** 2026-06-14
 
 ---
 
@@ -26,10 +26,10 @@ Uma tarefa é um item de linha com título editável e campos opcionais: tags, d
 Uma seção é um item especial que serve como separador visual e agrupador semântico. Seções têm título colorido, podem ser editadas e movidas como qualquer item, mas não possuem data, nota ou tags.
 
 ### Tags
-Tags são rótulos coloridos associados a tarefas. Cada arquivo tem seu próprio catálogo de tags (nome + cor + largura opcional). Uma tarefa pode ter múltiplas tags.
+Tags são rótulos coloridos associados a tarefas. Cada arquivo tem seu próprio catálogo de tags (nome, cor, largura opcional, estilo e fonte). Uma tarefa pode ter múltiplas tags.
 
-### Papéis (Contact e Assignee)
-Dois campos de texto livre, exibidos como chips visuais na linha da tarefa. A aparência do chip (cor, estilo, prefixo, fonte, tamanho) é configurável por papel para toda a lista.
+### Papéis (Contact, Assignee e Pendência)
+Três campos de texto livre exibidos como chips visuais na linha da tarefa. A aparência do chip (cor, estilo, prefixo, fonte, tamanho) é configurável por papel para toda a lista. O campo **Pendência** serve para registrar rapidamente o que está aguardando retorno de outra pessoa naquela tarefa.
 
 ### Links automáticos
 Padrões regex configurados pelo usuário que transformam partes do título em hiperlinks clicáveis. Útil para tickets de sistema (ex: `[OS-1234]` → link para o sistema de OS).
@@ -93,9 +93,10 @@ Cada tarefa é exibida em uma linha de altura configurável. Os campos exibidos 
 | `assignee` | Chip do designado |
 | `contact` | Chip do contato |
 | `title` | Título editável inline |
+| `pendencia` | Chip de pendência (texto livre) |
 | `notes` | Ícone circular (indicador de nota existente) |
 | `date` | Data de vencimento |
-| `spacer` | Espaço flexível (empurra o que vem depois para a direita) |
+| `spacer` | Espaço flexível — tudo após o espaço fica alinhado à direita |
 
 **Orelha de importância:** borda colorida de 4px na extremidade esquerda da linha, visível quando a tarefa está marcada como importante. Clicável para alternar.
 
@@ -146,6 +147,7 @@ Acessado com clique direito em qualquer tarefa:
 | 🏷 Alterar tags | Popup de seleção de tags |
 | 👤 Definir designado | Edição inline de designado |
 | 📞 Definir contato | Edição inline de contato |
+| ⚠ Definir pendência | Edição inline do texto de pendência |
 | 📅 Definir data | Abre seletor de data |
 | 📝 Notas | Abre janela de notas |
 | ⧉ Duplicar | Cria cópia com novo ID |
@@ -312,7 +314,7 @@ Janela de preferências com os seguintes campos:
 Configura a **ordem e visibilidade dos campos** na linha de tarefa, por arquivo. As configurações ficam salvas no próprio arquivo `.json` e viajam junto com a lista.
 
 Campos disponíveis para ativar/desativar e reordenar:
-`tags`, `assignee`, `contact`, `title`, `notes`, `spacer`, `date`
+`tags`, `assignee`, `contact`, `title`, `pendencia`, `notes`, `spacer`, `date`
 
 ---
 
@@ -320,26 +322,34 @@ Campos disponíveis para ativar/desativar e reordenar:
 
 Catálogo de tags do arquivo corrente:
 
-- **Criar** nova tag com nome, cor (seletor) e tamanho fixo opcional (em caracteres)
-- **Editar** a cor e o tamanho de uma tag existente
+- **Criar** nova tag com nome, estilo, fonte, cor (seletor nativo do Windows) e tamanho fixo opcional (em caracteres)
+- **Editar** cor, estilo, fonte e tamanho de uma tag existente
 - **Reordenar** as tags (afeta a ordem de exibição nos chips)
 - **Excluir** tag (remove do catálogo; tarefas que usavam a tag mantêm a referência textual)
+
+### Estilos de chip de tag
+
+| Estilo | Aparência |
+|---|---|
+| `rótulo` | Cantos levemente arredondados (padrão) |
+| `balão` | Pill totalmente arredondado |
+| `faixa` | Sem padding vertical, ocupa toda a altura da linha |
 
 ---
 
 ## 16. Gerenciar Papéis
 
-Configura a aparência dos campos Contact e Assignee:
+Configura a aparência dos chips de **Designado**, **Contato** e **Pendência**:
 
 | Campo | Descrição |
 |---|---|
-| Cor | Cor de fundo do chip |
-| Estilo | `tag` (cantos retos) ou `balloon` (pill arredondado) |
-| Prefixo | Texto antes do valor (ex: `@`, `→`) |
+| Cor | Cor de fundo do chip (abre seletor nativo do Windows) |
+| Estilo | `rótulo`, `balão` ou `faixa` |
+| Prefixo | Texto antes do valor (ex: `@`, `⚠`) |
 | Fonte | Nome da fonte do chip |
 | Tamanho | Largura fixa em caracteres (vazio = automático) |
 
-Preview ao vivo enquanto edita.
+Preview ao vivo enquanto edita. Clicar em um chip do preview navega diretamente para a aba correspondente.
 
 ---
 

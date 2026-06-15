@@ -34,6 +34,9 @@ public class TaskItem
     [JsonPropertyName("assignee")]
     public string Assignee { get; set; } = string.Empty;
 
+    [JsonPropertyName("pendencia")]
+    public string Pendencia { get; set; } = string.Empty;
+
     [JsonPropertyName("tags")]
     public List<string> Tags { get; set; } = [];
 
@@ -59,6 +62,7 @@ public class TaskItem
         NotesRich = NotesRich is null ? null : new NotesRich { Html = NotesRich.Html },
         Contact = Contact,
         Assignee = Assignee,
+        Pendencia = Pendencia,
         Tags = [.. Tags],
         ItemType = ItemType,
         SectionColor = SectionColor,

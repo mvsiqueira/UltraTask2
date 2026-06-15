@@ -119,11 +119,11 @@ public partial class TaskRowControl : UserControl
     private void Rebuild()
     {
         if (Item is null) return;
-        ContentArea.Items.Clear();
+        LeftArea.Children.Clear();
+        RightArea.Children.Clear();
 
         if (Item.IsSection) { RebuildSection(); return; }
 
-        // Linha normal: restaura altura, borda e deixa o RowBorderStyle (DynamicResource) controlar o fundo
         RowBorder.SetResourceReference(HeightProperty, "RowHeight");
         RowBorder.BorderThickness = new Thickness(0, 0, 0, 1);
         RowBorder.ClearValue(BackgroundProperty);
@@ -133,11 +133,15 @@ public partial class TaskRowControl : UserControl
         UpdateImportantEar();
         BuildContextMenu();
 
-        var order = TaskRowOrder ?? ["tags", "assignee", "contact", "title", "notes", "spacer", "date"];
+        var order = TaskRowOrder ?? ["tags", "assignee", "contact", "title", "pendencia", "notes", "spacer", "date"];
+        var rightSide = false;
         foreach (var token in order)
         {
+            if (token == "spacer") { rightSide = true; continue; }
             var el = BuildToken(token, order);
-            if (el is not null) ContentArea.Items.Add(el);
+            if (el is null) continue;
+            if (rightSide) RightArea.Children.Add(el);
+            else LeftArea.Children.Add(el);
         }
     }
 
@@ -150,8 +154,9 @@ public partial class TaskRowControl : UserControl
         ImportantEar.Visibility = Visibility.Collapsed;
         DeleteBtn.Visibility = Visibility.Visible;
 
-        ContentArea.VerticalAlignment = VerticalAlignment.Bottom;
-        ContentArea.Margin = new Thickness(0, 0, 0, 6);
+        ContentArea.VerticalAlignment = VerticalAlignment.Stretch;
+        LeftArea.VerticalAlignment = VerticalAlignment.Bottom;
+        LeftArea.Margin = new Thickness(0, 0, 0, 6);
 
         var editor = new InlineTextEditor
         {
@@ -173,7 +178,7 @@ public partial class TaskRowControl : UserControl
             Dispatcher.BeginInvoke(editor.BeginEdit, System.Windows.Threading.DispatcherPriority.Loaded);
             Item.IsEditing = false;
         }
-        ContentArea.Items.Add(editor);
+        LeftArea.Children.Add(editor);
 
         // Menu de seção
         var menu = new ContextMenu();
@@ -189,14 +194,15 @@ public partial class TaskRowControl : UserControl
 
     private UIElement? BuildToken(string token, IReadOnlyList<string> order) => token switch
     {
-        "tags"     => BuildTagsToken(),
-        "contact"  => BuildRoleToken("contact"),
-        "assignee" => BuildRoleToken("assignee"),
-        "title"    => BuildTitleToken(order),
-        "notes"    => BuildNotesToken(),
-        "date"     => BuildDateToken(),
-        "spacer"   => new FrameworkElement { Width = 8 }, // placeholder simples
-        _          => null,
+        "tags"      => BuildTagsToken(),
+        "contact"   => BuildRoleToken("contact"),
+        "assignee"  => BuildRoleToken("assignee"),
+        "title"     => BuildTitleToken(order),
+        "pendencia" => BuildPendenciaToken(),
+        "notes"     => BuildNotesToken(),
+        "date"      => BuildDateToken(),
+        "spacer"    => new FrameworkElement { Width = 8 },
+        _           => null,
     };
 
     private UIElement? BuildTagsToken()
@@ -210,7 +216,7 @@ public partial class TaskRowControl : UserControl
             .OrderBy(t => t.Order);
         foreach (var tag in ordered)
         {
-            var chip = new TagChipControl { TagName = tag.Name, TagColor = tag.Color, TagSize = tag.Size, Margin = new Thickness(0, 0, sp, 0) };
+            var chip = new TagChipControl { TagName = tag.Name, TagColor = tag.Color, TagSize = tag.Size, TagStyle = tag.Style, TagFont = tag.Font, Margin = new Thickness(0, 0, sp, 0) };
             chip.FilterRequested += (_, name) => FilterByTag?.Invoke(this, name);
             chip.MouseLeftButtonUp += (_, e) => { OpenTagEditor(); e.Handled = true; };
             panel.Children.Add(chip);
@@ -226,8 +232,8 @@ public partial class TaskRowControl : UserControl
 
         var cfg = (role == "contact" ? RoleConfig?.Contact : RoleConfig?.Assignee)
                ?? (role == "contact"
-                   ? new RoleEntry { Color = "#0F766E", Style = "balloon", Prefix = "@" }
-                   : new RoleEntry { Color = "#7C3AED", Style = "balloon", Prefix = "→" });
+                   ? new RoleEntry { Color = "#0F766E", Style = "balão", Prefix = "@" }
+                   : new RoleEntry { Color = "#7C3AED", Style = "balão", Prefix = "→" });
 
         var chip = new RoleChipControl
         {
@@ -381,13 +387,15 @@ public partial class TaskRowControl : UserControl
         {
             Width = circleSize, Height = circleSize,
             CornerRadius = new CornerRadius(circleSize / 2),
-            Background = (SolidColorBrush)FindResource("Accent"),
+            Background = (SolidColorBrush)FindResource("BgRow"),
+            BorderBrush = (SolidColorBrush)FindResource("BorderSubtle"),
+            BorderThickness = new Thickness(1),
             Child = new TextBlock
             {
                 Text = "",
                 FontFamily = new FontFamily("Segoe MDL2 Assets"),
                 FontSize = iconSize - 2,
-                Foreground = Brushes.White,
+                Foreground = (SolidColorBrush)FindResource("TextSecondary"),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             },
@@ -406,6 +414,64 @@ public partial class TaskRowControl : UserControl
         };
         btn.Click += (_, e) => { e.Handled = true; OpenNotesWindow(); };
         return btn;
+    }
+
+    private UIElement? BuildPendenciaToken()
+    {
+        if (Item is null || string.IsNullOrEmpty(Item.Pendencia)) return null;
+        var chip = new RoleChipControl
+        {
+            Value = Item.Pendencia,
+            RoleColor = RoleConfig?.Pendencia.Color ?? "#B45309",
+            RoleStyle = RoleConfig?.Pendencia.Style ?? "balão",
+            RolePrefix = RoleConfig?.Pendencia.Prefix ?? "⚠",
+            RoleFont = RoleConfig?.Pendencia.Font ?? "Segoe UI",
+            RoleSize = RoleConfig?.Pendencia.Size ?? string.Empty,
+            Margin = new Thickness(0, 0, (double)FindResource("TokenSpacing"), 0),
+            ToolTip = MakeTooltip("Pendência — clique para editar"),
+        };
+        chip.MouseLeftButtonUp += (_, e) =>
+        {
+            OpenPendenciaInlineEdit(chip);
+            e.Handled = true;
+        };
+        return chip;
+    }
+    private void OpenPendenciaInlineEdit(UIElement anchor)
+    {
+        var popup = new System.Windows.Controls.Primitives.Popup
+        {
+            PlacementTarget = anchor,
+            Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom,
+            StaysOpen = false,
+            IsOpen = true,
+        };
+        var tb = new TextBox
+        {
+            Text = Item!.Pendencia,
+            Width = 220,
+            Background = (SolidColorBrush)FindResource("BgPanel"),
+            Foreground = (SolidColorBrush)FindResource("TextPrimary"),
+            BorderBrush = (SolidColorBrush)FindResource("Accent"),
+            Padding = new Thickness(4, 2, 4, 2),
+            CaretBrush = (SolidColorBrush)FindResource("TextPrimary"),
+        };
+        tb.KeyDown += (_, e) =>
+        {
+            if (e.Key == Key.Enter || e.Key == Key.Escape)
+            {
+                if (e.Key == Key.Enter)
+                {
+                    Item!.Pendencia = tb.Text;
+                    ItemChanged?.Invoke(this, EventArgs.Empty);
+                    Rebuild();
+                }
+                popup.IsOpen = false;
+            }
+        };
+        popup.Child = new Border { Background = (SolidColorBrush)FindResource("BgPanel"), Child = tb, Padding = new Thickness(4) };
+        tb.Focus();
+        tb.SelectAll();
     }
 
     private UIElement? BuildDateToken()
@@ -500,7 +566,8 @@ public partial class TaskRowControl : UserControl
         menu.Items.Add(MakeMenuItem("Alterar tags",       OpenTagEditor,                                       ""));
         menu.Items.Add(MakeMenuItem("Definir designado",  () => OpenRoleInlineEditByName("assignee"),           ""));
         menu.Items.Add(MakeMenuItem("Definir contato",    () => OpenRoleInlineEditByName("contact"),            ""));
-        menu.Items.Add(MakeMenuItem("Definir data",       () => OpenDatePicker(null),                           ""));
+                menu.Items.Add(MakeMenuItem("Definir pendência",  OpenPendenciaInlineEditByName,                        ""));
+menu.Items.Add(MakeMenuItem("Definir data",       () => OpenDatePicker(null),                           ""));
         menu.Items.Add(MakeMenuItem("Notas",              OpenNotesWindow,                                      ""));
         menu.Items.Add(new Separator());
         menu.Items.Add(MakeMenuItem("Duplicar",           () => DuplicateRequested?.Invoke(this, EventArgs.Empty), ""));
@@ -536,9 +603,10 @@ public partial class TaskRowControl : UserControl
     private void OpenRoleInlineEditByName(string role)
     {
         var value = role == "contact" ? Item!.Contact : Item!.Assignee;
-        // Reutiliza o popup inline passando o próprio controle como âncora
         OpenRoleInlineEdit(role, value, this);
     }
+
+    private void OpenPendenciaInlineEditByName() => OpenPendenciaInlineEdit(this);
 
     private void OpenTagEditor()
     {
@@ -575,10 +643,16 @@ public partial class TaskRowControl : UserControl
                     ? BrushFromHex(tag.Color)
                     : new SolidColorBrush(Color.FromRgb(0x37, 0x41, 0x51));
 
-                double lum = isOn
-                    ? 0.299 * bg.Color.R + 0.587 * bg.Color.G + 0.114 * bg.Color.B
-                    : 255;
-                var fg = lum > 140 ? Brushes.Black : Brushes.White;
+                Brush fg;
+                if (isOn)
+                {
+                    double lum = 0.299 * bg.Color.R + 0.587 * bg.Color.G + 0.114 * bg.Color.B;
+                    fg = lum > 140 ? Brushes.Black : Brushes.White;
+                }
+                else
+                {
+                    fg = Brushes.White;
+                }
 
                 var chipBorder = new Border
                 {
@@ -650,10 +724,10 @@ public partial class TaskRowControl : UserControl
     private void OpenSectionColorPicker()
     {
         if (Item is null) return;
-        var dlg = new Views.ColorPickerDialog(Item.SectionColor) { Owner = Window.GetWindow(this) };
-        if (dlg.ShowDialog() == true)
+        var picked = Views.ColorPickerDialog.Pick(Item.SectionColor, Window.GetWindow(this));
+        if (picked is not null)
         {
-            Item.SectionColor = dlg.SelectedColor; // atualiza VM e Model via partial
+            Item.SectionColor = picked; // atualiza VM e Model via partial
             ItemChanged?.Invoke(this, EventArgs.Empty);
             Rebuild();
         }

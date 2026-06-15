@@ -141,7 +141,7 @@ public partial class MainViewModel : ObservableObject
     // --- Propriedades delegadas ao arquivo ---
 
     public IReadOnlyList<string> TaskRowOrder =>
-        CurrentFile?.TaskRowOrder ?? ["tags", "assignee", "contact", "title", "notes", "spacer", "date"];
+        CurrentFile?.TaskRowOrder ?? ["tags", "assignee", "contact", "title", "pendencia", "notes", "spacer", "date"];
 
     public RoleConfig RoleConfig =>
         CurrentFile?.RoleConfig ?? new RoleConfig();

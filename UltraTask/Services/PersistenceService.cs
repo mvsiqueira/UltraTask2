@@ -82,7 +82,21 @@ public static class PersistenceService
     {
         // Arquivo antigo sem task_row_order — aplica padrão.
         if (file.TaskRowOrder.Count == 0)
-            file.TaskRowOrder = ["tags", "assignee", "contact", "title", "notes", "spacer", "date"];
+            file.TaskRowOrder = ["tags", "assignee", "contact", "title", "pendencia", "notes", "spacer", "date"];
+
+        if (!file.TaskRowOrder.Contains("pendencia"))
+        {
+            var notesIdx = file.TaskRowOrder.IndexOf("notes");
+            var insertAt = notesIdx >= 0 ? notesIdx : file.TaskRowOrder.Count;
+            file.TaskRowOrder.Insert(insertAt, "pendencia");
+        }
+
+        // Migra nomes antigos de estilo de chip para os novos.
+        foreach (var entry in new[] { file.RoleConfig.Contact, file.RoleConfig.Assignee, file.RoleConfig.Pendencia })
+        {
+            if (entry.Style == "balloon") entry.Style = "balão";
+            if (entry.Style == "tag")     entry.Style = "rótulo";
+        }
 
         // role_config ausente já é inicializado pelo construtor padrão.
 

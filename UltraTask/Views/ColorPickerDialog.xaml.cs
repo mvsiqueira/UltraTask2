@@ -19,6 +19,58 @@ public partial class ColorPickerDialog : Window
         "#800080","#0080C0","#CC4FB9","#CCE6FF","#E1E1E1","#FF0080",
     ];
 
+    // Abre o seletor de cor padrão do Windows com a paleta pré-carregada.
+    // Retorna hex escolhido (#RRGGBB) ou null se cancelado.
+    public static string? Pick(string current, Window? owner = null)
+    {
+        var dlg = new System.Windows.Forms.ColorDialog
+        {
+            FullOpen = true,
+            AllowFullOpen = true,
+            SolidColorOnly = false,
+            CustomColors = PaletteToColorRefs(),
+        };
+
+        try
+        {
+            var c = (Color)ColorConverter.ConvertFromString(current);
+            dlg.Color = System.Drawing.Color.FromArgb(c.R, c.G, c.B);
+        }
+        catch { }
+
+        var hwnd = owner is not null
+            ? new System.Windows.Interop.WindowInteropHelper(owner).Handle
+            : nint.Zero;
+
+        var result = hwnd != nint.Zero
+            ? dlg.ShowDialog(new Win32Wrapper(hwnd))
+            : dlg.ShowDialog();
+
+        if (result != System.Windows.Forms.DialogResult.OK) return null;
+
+        var s = dlg.Color;
+        return $"#{s.R:X2}{s.G:X2}{s.B:X2}";
+    }
+
+    private static int[] PaletteToColorRefs()
+    {
+        // ColorDialog.CustomColors usa COLORREF: 0x00BBGGRR
+        return Palette.Take(16).Select(hex =>
+        {
+            try
+            {
+                var c = (Color)ColorConverter.ConvertFromString(hex);
+                return c.R | (c.G << 8) | (c.B << 16);
+            }
+            catch { return 0; }
+        }).ToArray();
+    }
+
+    private sealed class Win32Wrapper(nint handle) : System.Windows.Forms.IWin32Window
+    {
+        public nint Handle { get; } = handle;
+    }
+
     public ColorPickerDialog(string current)
     {
         InitializeComponent();

@@ -4,7 +4,6 @@
              VerticalAlignment="Center"
              Cursor="Hand">
     <Border x:Name="ChipBorder"
-            Padding="{StaticResource ChipPadding}"
             Background="Gray">
         <TextBlock x:Name="ChipLabel"
                    FontSize="{DynamicResource FontSizeSmall}"
