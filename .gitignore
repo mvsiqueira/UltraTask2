@@ -1,7 +1,11 @@
 # Build
 bin/
 obj/
+
+# Distribuição — inclui apenas a versão DLL (framework-dependent)
 dist/
+!dist/*-dotnet/
+!dist/*-dotnet/**
 
 # Visual Studio / Rider
 .vs/
