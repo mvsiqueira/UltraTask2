@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 using UltraTask.Controls;
 using UltraTask.Models;
 
@@ -12,6 +13,7 @@ public partial class RoleManagerWindow : Window
 {
     private readonly RoleConfig _config;
     private readonly Action _onChanged;
+    private readonly DispatcherTimer _debounce;
     private string _activeRole = "contact";
     private RoleEntry _contactSnapshot = new();
     private RoleEntry _assigneeSnapshot = new();
@@ -22,6 +24,8 @@ public partial class RoleManagerWindow : Window
         InitializeComponent();
         _config = config;
         _onChanged = onChanged;
+        _debounce = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
+        _debounce.Tick += (_, _) => { _debounce.Stop(); _onChanged(); };
         _contactSnapshot = config.Contact.Clone();
         _assigneeSnapshot = config.Assignee.Clone();
         _pendenciaSnapshot = config.Pendencia.Clone();
@@ -36,11 +40,11 @@ public partial class RoleManagerWindow : Window
     {
         panel.Children.Clear();
 
-        AddRow(panel, "Cor:", MakeColorRow(role, () => { _onChanged(); UpdatePreview(); }));
-        AddRow(panel, "Estilo:", MakeStyleCombo(role, () => { _onChanged(); UpdatePreview(); }));
-        AddRow(panel, "Prefixo:", MakeTextInput(role.Prefix, v => { role.Prefix = v; _onChanged(); UpdatePreview(); }));
-        AddRow(panel, "Fonte:", MakeFontCombo(role, () => { _onChanged(); UpdatePreview(); }));
-        AddRow(panel, "Tamanho (chars):", MakeTextInput(role.Size, v => { role.Size = v; _onChanged(); UpdatePreview(); }, width: 60));
+        AddRow(panel, "Cor:", MakeColorRow(role, () => { ScheduleChanged(); UpdatePreview(); }));
+        AddRow(panel, "Estilo:", MakeStyleCombo(role, () => { ScheduleChanged(); UpdatePreview(); }));
+        AddRow(panel, "Prefixo:", MakeTextInput(role.Prefix, v => { role.Prefix = v; ScheduleChanged(); UpdatePreview(); }));
+        AddRow(panel, "Fonte:", MakeFontCombo(role, () => { ScheduleChanged(); UpdatePreview(); }));
+        AddRow(panel, "Tamanho (chars):", MakeTextInput(role.Size, v => { role.Size = v; ScheduleChanged(); UpdatePreview(); }, width: 60));
     }
 
     private static void AddRow(StackPanel parent, string label, UIElement control)
@@ -185,6 +189,13 @@ public partial class RoleManagerWindow : Window
         }
     }
 
+    // Reinicia o timer de debounce — o rebuild da lista ocorre 300ms após a última alteração.
+    private void ScheduleChanged()
+    {
+        _debounce.Stop();
+        _debounce.Start();
+    }
+
     private void SelectTab(string tag)
     {
         foreach (TabItem tab in Tabs.Items)
@@ -213,6 +224,7 @@ public partial class RoleManagerWindow : Window
 
     private void OnCancel(object sender, RoutedEventArgs e)
     {
+        _debounce.Stop();
         ApplySnapshot(_config.Contact, _contactSnapshot);
         ApplySnapshot(_config.Assignee, _assigneeSnapshot);
         ApplySnapshot(_config.Pendencia, _pendenciaSnapshot);
@@ -220,5 +232,10 @@ public partial class RoleManagerWindow : Window
         Close();
     }
 
-    private void OnSave(object sender, RoutedEventArgs e) => Close();
+    private void OnSave(object sender, RoutedEventArgs e)
+    {
+        // Garante que alterações pendentes no debounce sejam aplicadas antes de fechar.
+        if (_debounce.IsEnabled) { _debounce.Stop(); _onChanged(); }
+        Close();
+    }
 }
