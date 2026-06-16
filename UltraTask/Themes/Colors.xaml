@@ -30,7 +30,9 @@
     <SolidColorBrush x:Key="TextMuted"       Color="{DynamicResource TextMutedColor}" />
     <SolidColorBrush x:Key="Accent"          Color="{DynamicResource AccentColor}" />
     <SolidColorBrush x:Key="Danger"          Color="{DynamicResource DangerColor}" />
-    <SolidColorBrush x:Key="ImportantEar"    Color="{DynamicResource ImportantEarColor}" />
+    <SolidColorBrush x:Key="ImportantEar"          Color="{DynamicResource ImportantEarColor}" />
+    <SolidColorBrush x:Key="BgRowImportant"        Color="{DynamicResource BgRowColor}" />
+    <SolidColorBrush x:Key="BgRowImportantHover"   Color="{DynamicResource BgRowHoverColor}" />
     <SolidColorBrush x:Key="BgSidebar"      Color="{DynamicResource BgPanelColor}" />
     <SolidColorBrush x:Key="SidebarFg"      Color="{DynamicResource TextSecondaryColor}" />
     <SolidColorBrush x:Key="SidebarHover"   Color="{DynamicResource BgRowHoverColor}" />

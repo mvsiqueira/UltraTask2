@@ -19,14 +19,17 @@
             BorderBrush="{DynamicResource BorderSubtle}"
             BorderThickness="0,0,0,1"
             Margin="{DynamicResource RowSpacing}"
-            Height="{DynamicResource RowHeight}">
+            Height="{DynamicResource RowHeight}"
+            PreviewMouseLeftButtonDown="OnRowPreviewMouseDown"
+            PreviewMouseMove="OnRowPreviewMouseMove"
+            MouseLeftButtonUp="OnRowMouseUp">
 
         <Grid>
             <Grid.ColumnDefinitions>
-                <!-- Orelha de importância (3px) -->
-                <ColumnDefinition Width="4" />
+                <!-- Orelha de importância -->
+                <ColumnDefinition Width="8" />
                 <!-- Grip de drag-and-drop -->
-                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="18" />
                 <!-- Checkbox de lote (visível só no modo lote) -->
                 <ColumnDefinition x:Name="BatchCol" Width="0" />
                 <!-- Área de conteúdo configurável -->
@@ -38,7 +41,7 @@
             <!-- Orelha de importância -->
             <Border Grid.Column="0"
                     x:Name="ImportantEar"
-                    Width="4"
+                    Width="8"
                     Background="Transparent"
                     CornerRadius="2,0,0,2"
                     Cursor="Hand"

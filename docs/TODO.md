@@ -22,7 +22,7 @@ _(nenhum item pendente no momento)_
 - [x] F11/F12 de troca de tema funcionam com janelas auxiliares abertas
 - [x] Cor do título, filtro e barra de botões acompanhando o tema
 - [x] Scrollbar fina aderente ao tema
-- [x] Ícone do app: transparente, barras brancas com borda suave, sparkle Ultrasoft dourado
+- [x] Ícone do app: transparente, barras brancas com borda suave, sparkle Ultrasoft dourado — corrigido clipping em 16×16 e 32×32
 - [x] Ícones Segoe MDL2 Assets no menu de contexto de tarefas e seções
 - [x] Janela de Notas: toolbar de formatação, remover formatação, checkbox ☐/☒ com cursor hand
 - [x] Popups sem botão na taskbar (ShowInTaskbar="False" nas janelas auxiliares)
@@ -45,3 +45,8 @@ _(nenhum item pendente no momento)_
 - [x] Data no formato dd/MM/yyyy
 - [x] Ícone de notas com fundo circular
 - [x] ESC na janela de notas fecha sem salvar
+- [x] Drag de tarefa pelo espaço vazio da linha (não apenas pelo grip)
+- [x] Configuração para realçar fundo das tarefas importantes (Configurações → Exibição)
+- [x] Ao excluir tag do cadastro, remove automaticamente das tarefas
+- [x] Filtro de tag atualizado ao adicionar/remover tag de tarefa e ao excluir tag do cadastro
+- [x] Janela Gerenciar Tags: painel superior mais compacto (altura natural dos controles)

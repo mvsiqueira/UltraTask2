@@ -193,6 +193,15 @@ public partial class MainViewModel : ObservableObject
         OnPropertyChanged(nameof(HasActiveFilter));
     }
 
+    // Chamado quando uma tarefa muda — atualiza filtro e dropdowns de opções.
+    public void NotifyItemChanged()
+    {
+        FilteredItems.Refresh();
+        OnPropertyChanged(nameof(AvailableTags));
+        OnPropertyChanged(nameof(AvailableContacts));
+        OnPropertyChanged(nameof(AvailableAssignees));
+    }
+
     [RelayCommand]
     public void ClearFilters()
     {

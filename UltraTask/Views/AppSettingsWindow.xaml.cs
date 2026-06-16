@@ -34,6 +34,7 @@ public partial class AppSettingsWindow : Window
         SelectComboItem(ThemeCombo,    settings.Theme);
         SelectComboItem(LayoutCombo,   settings.LayoutMode);
         SelectComboItem(TitlebarCombo, settings.TitlebarFormat);
+        HighlightImportantCheck.IsChecked = settings.HighlightImportant;
     }
 
     private static void SelectComboItem(ComboBox cb, string tag)
@@ -58,9 +59,11 @@ public partial class AppSettingsWindow : Window
 
     private void OnSave(object sender, RoutedEventArgs e)
     {
-        _settings.Theme         = ((ThemeCombo.SelectedItem    as ComboBoxItem)?.Tag?.ToString()) ?? "dark";
-        _settings.LayoutMode    = ((LayoutCombo.SelectedItem   as ComboBoxItem)?.Tag?.ToString()) ?? "compact";
-        _settings.TitlebarFormat = ((TitlebarCombo.SelectedItem as ComboBoxItem)?.Tag?.ToString()) ?? "app-list";
+        _settings.Theme              = ((ThemeCombo.SelectedItem    as ComboBoxItem)?.Tag?.ToString()) ?? "dark";
+        _settings.LayoutMode         = ((LayoutCombo.SelectedItem   as ComboBoxItem)?.Tag?.ToString()) ?? "compact";
+        _settings.TitlebarFormat     = ((TitlebarCombo.SelectedItem as ComboBoxItem)?.Tag?.ToString()) ?? "app-list";
+        _settings.HighlightImportant = HighlightImportantCheck.IsChecked == true;
+        Services.ThemeService.HighlightImportant = _settings.HighlightImportant;
         Services.PersistenceService.SaveSettings(_settings);
         Services.ThemeService.Apply(_settings.Theme);
         Services.LayoutService.Apply(_settings.LayoutMode);

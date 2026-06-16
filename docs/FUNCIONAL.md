@@ -2,7 +2,7 @@
 
 **Versão:** 2.0.0  
 **Plataforma:** Windows 10/11  
-**Atualizado:** 2026-06-14
+**Atualizado:** 2026-06-16
 
 ---
 
@@ -98,11 +98,11 @@ Cada tarefa é exibida em uma linha de altura configurável. Os campos exibidos 
 | `date` | Data de vencimento |
 | `spacer` | Espaço flexível — tudo após o espaço fica alinhado à direita |
 
-**Orelha de importância:** borda colorida de 4px na extremidade esquerda da linha, visível quando a tarefa está marcada como importante. Clicável para alternar.
+**Orelha de importância:** borda colorida de 8px na extremidade esquerda da linha, visível quando a tarefa está marcada como importante. Clicável para alternar. Quando a opção "Realçar tarefas importantes" está ativa nas Configurações, o fundo da linha também é destacado com uma cor diferenciada por tema.
 
 **Botão excluir:** aparece na extremidade direita ao passar o mouse.
 
-**Grip de drag-and-drop:** ícone ⠿ à esquerda da linha, visível no hover. Arrastar para reordenar.
+**Grip de drag-and-drop:** ícone ⠿ à esquerda da linha, visível no hover. Arrastar o grip ou qualquer área vazia da linha para reordenar.
 
 ### Linha de seção
 Altura maior, fundo diferenciado, título colorido em fonte maior e sem borda inferior. Seções aparecem como agrupadores visuais na lista. Botão excluir fica sempre visível na seção.
@@ -242,7 +242,7 @@ O botão **X Limpar** remove todos os filtros de uma vez. Ele só aparece quando
 
 ## 9. Drag-and-Drop
 
-Tarefas e seções podem ser reordenadas arrastando pelo grip (ícone ⠿) que aparece ao passar o mouse sobre a linha.
+Tarefas e seções podem ser reordenadas arrastando pelo grip (ícone ⠿) ou por qualquer área vazia da linha.
 
 - Uma **linha azul** indica a posição de destino durante o arrasto
 - A posição é calculada pela metade vertical do item de destino
@@ -306,6 +306,7 @@ Janela de preferências com os seguintes campos:
 | Tema | Escuro / Claro |
 | Layout | Compact / Normal / Extended |
 | Formato da barra de título | Nome do app / Nome da lista / Nome do app — Nome da lista / Nome da lista — Nome do app |
+| Realçar tarefas importantes | Checkbox — destaca o fundo das linhas marcadas como importantes |
 
 ---
 
@@ -325,7 +326,7 @@ Catálogo de tags do arquivo corrente:
 - **Criar** nova tag com nome, estilo, fonte, cor (seletor nativo do Windows) e tamanho fixo opcional (em caracteres)
 - **Editar** cor, estilo, fonte e tamanho de uma tag existente
 - **Reordenar** as tags (afeta a ordem de exibição nos chips)
-- **Excluir** tag (remove do catálogo; tarefas que usavam a tag mantêm a referência textual)
+- **Excluir** tag (remove do catálogo e automaticamente de todas as tarefas que a continham)
 
 ### Estilos de chip de tag
 

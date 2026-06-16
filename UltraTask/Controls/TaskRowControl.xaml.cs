@@ -110,6 +110,8 @@ public partial class TaskRowControl : UserControl
         if (Item is null || Item.IsSection) return;
         if (selected)
             RowBorder.SetResourceReference(Border.BackgroundProperty, "BgRowSelected");
+        else if (Item.Important)
+            RowBorder.SetResourceReference(Border.BackgroundProperty, "BgRowImportant");
         else
             RowBorder.SetResourceReference(Border.BackgroundProperty, "BgRow");
     }
@@ -503,6 +505,7 @@ public partial class TaskRowControl : UserControl
             ? (SolidColorBrush)FindResource("ImportantEar")
             : Brushes.Transparent;
         ImportantEar.ToolTip = Item.Important ? "Desmarcar importante" : "Marcar como importante";
+        UpdateSelectionBackground(Item.IsSelected);
         BuildContextMenu();
     }
 
@@ -522,7 +525,8 @@ public partial class TaskRowControl : UserControl
         GripIcon.Opacity = 1;
         DeleteBtn.Opacity = 1;
         if (!Item!.IsSection && Item.IsSelected == false)
-            RowBorder.SetResourceReference(BackgroundProperty, "BgRowHover");
+            RowBorder.SetResourceReference(BackgroundProperty,
+                Item.Important ? "BgRowImportantHover" : "BgRowHover");
     }
 
     private void OnMouseLeave(object sender, MouseEventArgs e)
@@ -540,6 +544,9 @@ public partial class TaskRowControl : UserControl
 
     // ===== Drag-and-drop =====
 
+    private Point _dragStartPoint;
+    private bool _isDragReady;
+
     private void OnGripMouseDown(object sender, MouseButtonEventArgs e)
     {
         if (e.LeftButton == MouseButtonState.Pressed)
@@ -547,6 +554,42 @@ public partial class TaskRowControl : UserControl
             DragStarted?.Invoke(this, EventArgs.Empty);
             e.Handled = true;
         }
+    }
+
+    // Inicia drag ao clicar e arrastar qualquer área vazia da linha.
+    private void OnRowPreviewMouseDown(object sender, MouseButtonEventArgs e)
+    {
+        if (e.LeftButton != MouseButtonState.Pressed) return;
+        if (IsInteractiveDragSource(e.OriginalSource)) return;
+        _dragStartPoint = e.GetPosition(this);
+        _isDragReady = true;
+    }
+
+    private void OnRowPreviewMouseMove(object sender, MouseEventArgs e)
+    {
+        if (!_isDragReady || e.LeftButton != MouseButtonState.Pressed) { _isDragReady = false; return; }
+        var pos = e.GetPosition(this);
+        var delta = pos - _dragStartPoint;
+        if (Math.Abs(delta.X) > 4 || Math.Abs(delta.Y) > 4)
+        {
+            _isDragReady = false;
+            DragStarted?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    private void OnRowMouseUp(object sender, MouseButtonEventArgs e) => _isDragReady = false;
+
+    private static bool IsInteractiveDragSource(object source)
+    {
+        for (var el = source as DependencyObject; el is not null; el = VisualTreeHelper.GetParent(el))
+        {
+            if (el is TextBox or Button or CheckBox or ComboBox or ListBox or System.Windows.Controls.Primitives.ScrollBar)
+                return true;
+            // Tag chips, role chips e outros controles clicáveis
+            if (el is UserControl and not TaskRowControl)
+                return true;
+        }
+        return false;
     }
 
     // ===== Context menu =====

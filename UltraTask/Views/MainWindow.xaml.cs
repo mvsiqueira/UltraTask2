@@ -22,6 +22,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         DataContext = new MainViewModel();
 
+        Services.ThemeService.HighlightImportant = Vm.Settings.HighlightImportant;
         Services.ThemeService.Apply(Vm.Settings.Theme);
         Services.LayoutService.Apply(Vm.Settings.LayoutMode);
         RestoreWindowGeometry();
@@ -168,8 +169,12 @@ public partial class MainWindow : Window
         var win = new TagManagerWindow(Vm.CurrentFile.TagCatalog, () =>
         {
             Vm.ScheduleSave();
-            // Força rebind dos chips na lista
             Vm.AllItems.ToList().ForEach(i => i.RefreshTags());
+            Vm.NotifyItemChanged();
+        }, onTagDeleted: tagName =>
+        {
+            foreach (var item in Vm.AllItems)
+                item.Model.Tags.Remove(tagName);
         }) { Owner = this };
         win.ShowDialog();
         // Atualiza a lista após fechar (ordem das tags pode ter mudado)
@@ -251,6 +256,7 @@ public partial class MainWindow : Window
     private void OnItemChanged(object sender, EventArgs e)
     {
         Vm.ScheduleSave();
+        Vm.NotifyItemChanged();
         UpdateStatus();
     }
 

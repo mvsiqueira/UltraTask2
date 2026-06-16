@@ -38,4 +38,8 @@ public class AppSettings
     // Formato do título na taskbar: "app", "list", "app-list", "list-app".
     [JsonPropertyName("titlebar_format")]
     public string TitlebarFormat { get; set; } = "app-list";
+
+    // Realça o fundo das tarefas marcadas como importantes.
+    [JsonPropertyName("highlight_important")]
+    public bool HighlightImportant { get; set; } = false;
 }

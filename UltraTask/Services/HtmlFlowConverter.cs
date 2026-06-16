@@ -95,11 +95,35 @@ public static partial class HtmlFlowConverter
         }
     }
 
+    internal const double CheckboxFontSize = 16;
+
     private static void AppendText(string text, InlineState state, InlineCollection target)
     {
         if (string.IsNullOrEmpty(text)) return;
 
+        text = UnescapeHtml(text);
+
+        // Separa caracteres de checkbox para aplicar fonte maior individualmente
+        int pos = 0;
+        while (pos < text.Length)
+        {
+            int cbIdx = text.IndexOfAny(['☐', '☒'], pos);
+            if (cbIdx < 0)
+            {
+                target.Add(MakeRun(text[pos..], state, double.NaN));
+                break;
+            }
+            if (cbIdx > pos)
+                target.Add(MakeRun(text[pos..cbIdx], state, double.NaN));
+            target.Add(MakeRun(text[cbIdx].ToString(), state, CheckboxFontSize));
+            pos = cbIdx + 1;
+        }
+    }
+
+    private static Run MakeRun(string text, InlineState state, double fontSize)
+    {
         var run = new Run(text);
+        if (!double.IsNaN(fontSize)) run.FontSize = fontSize;
 
         if (state.Bold) run.FontWeight = FontWeights.Bold;
         if (state.Italic) run.FontStyle = FontStyles.Italic;
@@ -114,7 +138,7 @@ public static partial class HtmlFlowConverter
         if (state.BackColor is not null)
             run.Background = new SolidColorBrush(state.BackColor.Value);
 
-        target.Add(run);
+        return run;
     }
 
     private static void ApplySpanStyle(string tag, InlineState state)
@@ -223,6 +247,10 @@ public static partial class HtmlFlowConverter
 
     private static string EscapeHtml(string text) =>
         text.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+
+    // &amp; deve ser o último a ser decodificado para preservar entidades literais (ex: &amp;lt; → &lt;)
+    private static string UnescapeHtml(string text) =>
+        text.Replace("&lt;", "<").Replace("&gt;", ">").Replace("&amp;", "&");
 
     private static string ColorToHex(Color c) =>
         $"#{c.R:X2}{c.G:X2}{c.B:X2}";

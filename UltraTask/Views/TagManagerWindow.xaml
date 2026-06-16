@@ -20,8 +20,8 @@
         <!-- Formulário de nova tag -->
         <Border Grid.Row="0"
                 Background="{DynamicResource BgPanel}"
-                CornerRadius="4" Padding="8,4" Margin="0,0,0,8">
-            <Grid>
+                CornerRadius="4" Padding="8,6" Margin="0,0,0,8">
+            <Grid VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -32,35 +32,37 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBox Grid.Column="0" x:Name="NewTagName"
-                         
+                         Height="24"
                          Background="{DynamicResource BgRow}"
                          Foreground="{DynamicResource TextPrimary}"
                          BorderBrush="{DynamicResource BorderSubtle}"
-                         Padding="6,3" Margin="0,0,6,0"
+                         VerticalContentAlignment="Center"
+                         Padding="6,0" Margin="0,0,6,0"
                          KeyDown="OnNewTagKeyDown" />
 
                 <TextBox Grid.Column="1" x:Name="NewTagSize"
-                         Width="40"
+                         Width="40" Height="24"
                          Background="{DynamicResource BgRow}"
                          Foreground="{DynamicResource TextPrimary}"
                          BorderBrush="{DynamicResource BorderSubtle}"
-                         Padding="4,3" Margin="0,0,6,0"
+                         VerticalContentAlignment="Center"
+                         Padding="4,0" Margin="0,0,6,0"
                          ToolTip="Largura fixa em caracteres (vazio = auto)" />
 
                 <ComboBox Grid.Column="2" x:Name="NewTagStyle" Grid.Row="0"
-                          Width="70"
+                          Width="70" Height="24"
                           Background="{DynamicResource BgRow}"
                           Foreground="{DynamicResource TextPrimary}"
                           BorderBrush="{DynamicResource BorderSubtle}"
-                          Padding="4,3" Margin="0,0,6,0"
+                          Padding="4,0" Margin="0,0,6,0"
                           SelectedIndex="0" />
 
                 <ComboBox Grid.Column="3" x:Name="NewTagFont"
-                          Width="90"
+                          Width="90" Height="24"
                           Background="{DynamicResource BgRow}"
                           Foreground="{DynamicResource TextPrimary}"
                           BorderBrush="{DynamicResource BorderSubtle}"
-                          Padding="4,3" Margin="0,0,6,0"
+                          Padding="4,0" Margin="0,0,6,0"
                           SelectedIndex="0" />
 
                 <!-- Swatch de cor -->

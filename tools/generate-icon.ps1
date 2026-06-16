@@ -55,17 +55,29 @@ function Draw-UltraTaskIcon([int]$size) {
             ([float](20*$s)), ([float](74*$s)), ([float](24*$s)), ([float](3*$s)))
     }
 
-    # --- sparkle Ultrasoft — raio maior em tamanhos pequenos para melhor visibilidade ---
-    # 16px → 40% do size, 32px → 34%, 48px → 29%, 256px → 24%
+    # --- sparkle Ultrasoft — raio e posição ajustados por tamanho para não clipar ---
     $sparkleRadiusPct = switch ($size) {
-        16  { 0.40 }
-        32  { 0.34 }
-        48  { 0.29 }
+        16  { 0.34 }
+        32  { 0.30 }
+        48  { 0.27 }
         default { 0.24 }
     }
-    $cx = [float](72 * $s)
-    $cy = [float](73 * $s)
-    $r  = [float]($size * $sparkleRadiusPct)
+    $r = [float]($size * $sparkleRadiusPct)
+    # cx/cy em % do size — limitados a (size - r) para não clipar na borda
+    $cxPct = switch ($size) {
+        16  { 0.60 }
+        32  { 0.65 }
+        48  { 0.69 }
+        default { 0.72 }
+    }
+    $cyPct = switch ($size) {
+        16  { 0.60 }
+        32  { 0.65 }
+        48  { 0.70 }
+        default { 0.73 }
+    }
+    $cx = [float]([Math]::Min($size * $cxPct, $size - $r - 1))
+    $cy = [float]([Math]::Min($size * $cyPct, $size - $r - 1))
     $cp = [float](0.36 * $r)   # fator bezier das pontas
 
     $sparkle = New-Object System.Drawing.Drawing2D.GraphicsPath

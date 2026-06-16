@@ -12,17 +12,19 @@ public partial class TagManagerWindow : Window
 {
     private readonly List<TagEntry> _tags;
     private readonly Action _onChanged;
+    private readonly Action<string>? _onTagDeleted;
     private string _pendingColor = "#2563EB";
     private List<TagEntry> _snapshot = [];
 
     private static readonly string[] Styles = ["rótulo", "balão", "faixa"];
     private static readonly string[] Fonts  = ["Segoe UI", "Consolas", "Courier New", "Verdana", "Arial", "Tahoma"];
 
-    public TagManagerWindow(List<TagEntry> tags, Action onChanged)
+    public TagManagerWindow(List<TagEntry> tags, Action onChanged, Action<string>? onTagDeleted = null)
     {
         InitializeComponent();
         _tags = tags;
         _onChanged = onChanged;
+        _onTagDeleted = onTagDeleted;
         _snapshot = tags.Select(t => t.Clone()).ToList();
 
         foreach (var s in Styles) NewTagStyle.Items.Add(s);
@@ -228,6 +230,7 @@ public partial class TagManagerWindow : Window
                 // Reordena para não deixar buracos
                 var ordered = _tags.OrderBy(t => t.Order).ToList();
                 for (int i = 0; i < ordered.Count; i++) ordered[i].Order = i;
+                _onTagDeleted?.Invoke(tag.Name);
                 _onChanged();
                 RefreshList();
             }
