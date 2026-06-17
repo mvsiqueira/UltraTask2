@@ -10,9 +10,24 @@ namespace UltraTask.Services;
 //   2. arquivo de tarefas JSON — dados do usuário
 public static class PersistenceService
 {
-    // Localização fixa do settings.json ao lado do executável.
+    // Em MSIX o diretório do EXE é somente leitura — usa %LOCALAPPDATA%\UltraTask.
+    // Em instalação normal (DLL/EXE solto) mantém o settings.json ao lado do executável.
     public static string SettingsPath =>
-        Path.Combine(AppContext.BaseDirectory, "settings.json");
+        IsPackaged
+            ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UltraTask", "settings.json")
+            : Path.Combine(AppContext.BaseDirectory, "settings.json");
+
+    // Detecta se o app está rodando dentro de um pacote MSIX via Win32 API.
+    // APPMODEL_ERROR_NO_PACKAGE (15700) = não empacotado.
+    private static readonly bool IsPackaged = CheckIsPackaged();
+    private static bool CheckIsPackaged()
+    {
+        try { var len = 0u; return GetCurrentPackageFullName(ref len, null) != 15700; }
+        catch { return false; }
+    }
+
+    [System.Runtime.InteropServices.DllImport("kernel32.dll", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
+    private static extern int GetCurrentPackageFullName(ref uint packageFullNameLength, System.Text.StringBuilder? packageFullName);
 
     private static readonly JsonSerializerOptions _jsonOptions = new()
     {
@@ -43,6 +58,9 @@ public static class PersistenceService
 
     public static void SaveSettings(AppSettings settings)
     {
+        var dir = Path.GetDirectoryName(SettingsPath);
+        if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+            Directory.CreateDirectory(dir);
         var json = JsonSerializer.Serialize(settings, _jsonOptions);
         File.WriteAllText(SettingsPath, json);
     }
