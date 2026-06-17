@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 using Microsoft.Win32;
 using UltraTask.Controls;
 using UltraTask.ViewModels;
@@ -51,10 +52,13 @@ public partial class MainWindow : Window
 
     private static readonly string[] Layouts = ["compact", "normal", "extended"];
 
+    // Debounce do rebuild ao mudar layout via scroll — evita rebuild a cada tick da roda.
+    private readonly DispatcherTimer _layoutDebounce = new() { Interval = TimeSpan.FromMilliseconds(150) };
+
     private void OnGlobalMouseWheel(object sender, MouseWheelEventArgs e)
     {
         if ((Keyboard.Modifiers & ModifierKeys.Control) == 0) return;
-        e.Handled = true; // sempre consome o evento quando Shift está pressionado
+        e.Handled = true;
 
         var current = Array.IndexOf(Layouts, Vm.Settings.LayoutMode);
         if (current < 0) current = 1;
@@ -62,9 +66,21 @@ public partial class MainWindow : Window
         if (next == current) return;
 
         var mode = Layouts[next];
-        Services.LayoutService.Apply(mode);
+        Services.LayoutService.Apply(mode); // atualiza DynamicResources imediatamente
         Vm.Settings.LayoutMode = mode;
         Services.PersistenceService.SaveSettings(Vm.Settings);
+
+        // Rebuild das linhas adiado — evita rebuild a cada tick enquanto o usuário scrolla
+        _layoutDebounce.Stop();
+        _layoutDebounce.Tick -= OnLayoutDebounced;
+        _layoutDebounce.Tick += OnLayoutDebounced;
+        _layoutDebounce.Start();
+    }
+
+    private void OnLayoutDebounced(object? sender, EventArgs e)
+    {
+        _layoutDebounce.Stop();
+        _layoutDebounce.Tick -= OnLayoutDebounced;
         Vm.LayoutVersion++;
     }
 
@@ -256,7 +272,8 @@ public partial class MainWindow : Window
     private void OnItemChanged(object sender, EventArgs e)
     {
         Vm.ScheduleSave();
-        Vm.NotifyItemChanged();
+        if (Vm.HasActiveFilter)
+            Vm.NotifyItemChanged();
         UpdateStatus();
     }
 
