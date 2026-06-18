@@ -17,7 +17,7 @@ public partial class TagManagerWindow : Window
     private List<TagEntry> _snapshot = [];
 
     private static readonly string[] Styles = ["rótulo", "balão", "faixa"];
-    private static readonly string[] Fonts  = ["Segoe UI", "Consolas", "Courier New", "Verdana", "Arial", "Tahoma"];
+    private static readonly string[] Fonts  = ["Arial", "Calibri", "Century Gothic", "Consolas", "Courier New", "Dancing Script", "Impact", "JetBrains Mono", "Lucida Handwriting", "Segoe UI", "Space Mono", "Tahoma", "Verdana"];
 
     public TagManagerWindow(List<TagEntry> tags, Action onChanged, Action<string>? onTagDeleted = null)
     {

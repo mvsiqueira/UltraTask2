@@ -385,23 +385,25 @@ public partial class TaskRowControl : UserControl
         if (Item is null || !Item.HasNotes) return null;
         var iconSize = (double)FindResource("FontSizeBase") + 2;
         var circleSize = iconSize + 8;
+        var noteText = new TextBlock
+        {
+            Text = "",
+            FontFamily = new FontFamily("Segoe MDL2 Assets"),
+            FontSize = iconSize - 2,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+        };
+        noteText.SetResourceReference(TextElement.ForegroundProperty, "TextSecondary");
+
         var circle = new Border
         {
             Width = circleSize, Height = circleSize,
             CornerRadius = new CornerRadius(circleSize / 2),
-            Background = (SolidColorBrush)FindResource("BgRow"),
-            BorderBrush = (SolidColorBrush)FindResource("BorderSubtle"),
             BorderThickness = new Thickness(1),
-            Child = new TextBlock
-            {
-                Text = "",
-                FontFamily = new FontFamily("Segoe MDL2 Assets"),
-                FontSize = iconSize - 2,
-                Foreground = (SolidColorBrush)FindResource("TextSecondary"),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-            },
+            Child = noteText,
         };
+        circle.SetResourceReference(Border.BackgroundProperty, "BgRow");
+        circle.SetResourceReference(Border.BorderBrushProperty, "BorderSubtle");
         var btn = new Button
         {
             Content = circle,

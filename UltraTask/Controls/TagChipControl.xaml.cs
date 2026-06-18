@@ -25,7 +25,7 @@ public partial class TagChipControl : System.Windows.Controls.UserControl
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
         ChipLabel.Text = TagName;
-        ChipLabel.FontFamily = new FontFamily(TagFont);
+        ChipLabel.FontFamily = Services.FontHelper.Resolve(TagFont);
         ChipLabel.VerticalAlignment = VerticalAlignment.Center;
         var bg = BrushFromHex(TagColor);
         ChipBorder.Background = bg;

@@ -25,7 +25,7 @@ public partial class RoleChipControl : System.Windows.Controls.UserControl
 
         var text = string.IsNullOrEmpty(RolePrefix) ? Value : $"{RolePrefix} {Value}";
         ChipLabel.Text = text;
-        ChipLabel.FontFamily = new FontFamily(RoleFont);
+        ChipLabel.FontFamily = Services.FontHelper.Resolve(RoleFont);
         ChipLabel.Foreground = GetContrastForeground(RoleColor);
         ChipLabel.VerticalAlignment = VerticalAlignment.Center;
 

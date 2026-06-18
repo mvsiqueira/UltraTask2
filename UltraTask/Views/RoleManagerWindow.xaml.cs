@@ -132,7 +132,7 @@ public partial class RoleManagerWindow : Window
             BorderBrush = new SolidColorBrush(Color.FromRgb(0x37, 0x41, 0x51)),
             FontSize = 11, Height = 24,
         };
-        foreach (var f in new[] { "Segoe UI", "Consolas", "Courier New", "Verdana", "Arial", "Tahoma" })
+        foreach (var f in new[] { "Arial", "Calibri", "Century Gothic", "Consolas", "Courier New", "Dancing Script", "Impact", "JetBrains Mono", "Lucida Handwriting", "Segoe UI", "Space Mono", "Tahoma", "Verdana" })
             cb.Items.Add(f);
         cb.SelectedItem = cb.Items.Contains(role.Font) ? role.Font : "Segoe UI";
         cb.SelectionChanged += (_, _) =>
