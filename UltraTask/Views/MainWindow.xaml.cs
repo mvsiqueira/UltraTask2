@@ -48,6 +48,9 @@ public partial class MainWindow : Window
 
         KeyDown += OnGlobalKeyDown;
         PreviewMouseWheel += OnGlobalMouseWheel;
+
+        // Garante foco e botão na taskbar ao abrir — necessário quando lançado via dotnet.exe (versão DLL).
+        ContentRendered += (_, _) => { Activate(); };
     }
 
     private static readonly string[] Layouts = ["compact", "normal", "extended"];
