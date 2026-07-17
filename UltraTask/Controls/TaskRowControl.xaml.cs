@@ -126,7 +126,7 @@ public partial class TaskRowControl : UserControl
 
         if (Item.IsSection) { RebuildSection(); return; }
 
-        RowBorder.SetResourceReference(HeightProperty, "RowHeight");
+        MainRow.SetResourceReference(HeightProperty, "RowHeight");
         RowBorder.BorderThickness = new Thickness(0, 0, 0, 1);
         RowBorder.ClearValue(BackgroundProperty);
         ContentArea.VerticalAlignment = VerticalAlignment.Center;
@@ -135,7 +135,7 @@ public partial class TaskRowControl : UserControl
         UpdateImportantEar();
         BuildContextMenu();
 
-        var order = TaskRowOrder ?? ["tags", "assignee", "contact", "title", "pendencia", "notes", "spacer", "date"];
+        var order = TaskRowOrder ?? ["subtasks", "tags", "assignee", "contact", "title", "pendencia", "notes", "spacer", "date"];
         var rightSide = false;
         foreach (var token in order)
         {
@@ -145,12 +145,15 @@ public partial class TaskRowControl : UserControl
             if (rightSide) RightArea.Children.Add(el);
             else LeftArea.Children.Add(el);
         }
+
+        RebuildSubtasksPanel();
     }
 
     private void RebuildSection()
     {
         // Seção: fundo diferente, linha colorida, título em destaque, sem borda inferior
-        RowBorder.SetResourceReference(HeightProperty, "SectionHeight");
+        SubtasksPanel.Children.Clear();
+        MainRow.SetResourceReference(HeightProperty, "SectionHeight");
         RowBorder.SetResourceReference(BackgroundProperty, "BgSection");
         RowBorder.BorderThickness = new Thickness(0);
         ImportantEar.Visibility = Visibility.Collapsed;
@@ -202,6 +205,7 @@ public partial class TaskRowControl : UserControl
         "title"     => BuildTitleToken(order),
         "pendencia" => BuildPendenciaToken(),
         "notes"     => BuildNotesToken(),
+        "subtasks"  => BuildSubtasksToggleToken(),
         "date"      => BuildDateToken(),
         "spacer"    => new FrameworkElement { Width = 8 },
         _           => null,
@@ -323,7 +327,34 @@ public partial class TaskRowControl : UserControl
             Dispatcher.BeginInvoke(editor.BeginEdit, System.Windows.Threading.DispatcherPriority.Loaded);
             Item.IsEditing = false;
         }
+
         return editor;
+    }
+
+    // Chevron de expandir/colapsar subtarefas — token posicionável via task_row_order.
+    // Só aparece quando a tarefa tem subtarefas.
+    private UIElement? BuildSubtasksToggleToken()
+    {
+        if (Item is null || Item.Subtasks.Count == 0) return null;
+
+        var chevron = new TextBlock
+        {
+            Text = Item.IsSubtasksExpanded ? "" : "",
+            FontFamily = new FontFamily("Segoe MDL2 Assets"),
+            FontSize = 9,
+            Margin = new Thickness((double)FindResource("TokenSpacing"), 0, (double)FindResource("TokenSpacing") * 2, 0),
+            VerticalAlignment = VerticalAlignment.Center,
+            Cursor = Cursors.Hand,
+        };
+        chevron.SetResourceReference(TextBlock.ForegroundProperty, "TextMuted");
+        chevron.MouseLeftButtonDown += (_, e) =>
+        {
+            Item.IsSubtasksExpanded = !Item.IsSubtasksExpanded;
+            chevron.Text = Item.IsSubtasksExpanded ? "" : "";
+            RebuildSubtasksPanel();
+            e.Handled = true;
+        };
+        return chevron;
     }
 
     // Resolve links no título e popula o ViewBlock com Hyperlinks quando há matches.
@@ -627,6 +658,7 @@ public partial class TaskRowControl : UserControl
                 menu.Items.Add(MakeMenuItem("Definir pendência",  OpenPendenciaInlineEditByName,                        ""));
 menu.Items.Add(MakeMenuItem("Definir data",       () => OpenDatePicker(null),                           ""));
         menu.Items.Add(MakeMenuItem("Notas",              OpenNotesWindow,                                      ""));
+        menu.Items.Add(MakeMenuItem("Subtarefas",         OpenSubtasksWindow,                                   ""));
         menu.Items.Add(new Separator());
         menu.Items.Add(MakeMenuItem("Duplicar",           () => DuplicateRequested?.Invoke(this, EventArgs.Empty), ""));
         menu.Items.Add(MakeMenuItem("Excluir",            () => DeleteRequested?.Invoke(this, EventArgs.Empty),    ""));
@@ -808,6 +840,54 @@ menu.Items.Add(MakeMenuItem("Definir data",       () => OpenDatePicker(null),   
             Title = $"Notas — {Item.Title}",
         };
         win.ShowDialog();
+    }
+
+    private void OpenSubtasksWindow()
+    {
+        if (Item is null) return;
+        var win = new Views.SubtasksWindow(Item.Model.Subtasks, lines =>
+        {
+            Item.Model.Subtasks = lines;
+            Item.RefreshSubtasks();
+            Item.IsSubtasksExpanded = true;
+            ItemChanged?.Invoke(this, EventArgs.Empty);
+            Rebuild(); // reconstrói também o chevron, que só aparece quando há subtarefas
+        })
+        {
+            Owner = Window.GetWindow(this),
+            Title = $"Subtarefas — {Item.Title}",
+        };
+        win.ShowDialog();
+    }
+
+    // Monta a lista de subtarefas indentada abaixo da linha principal.
+    private void RebuildSubtasksPanel()
+    {
+        SubtasksPanel.Children.Clear();
+        if (Item is null || Item.Subtasks.Count == 0 || !Item.IsSubtasksExpanded) return;
+
+        foreach (var text in Item.Subtasks)
+        {
+            var row = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 2) };
+            var bullet = new TextBlock
+            {
+                Text = "–",
+                Margin = new Thickness(0, 0, 6, 0),
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            bullet.SetResourceReference(TextBlock.ForegroundProperty, "TextMuted");
+            var label = new TextBlock
+            {
+                Text = text,
+                FontSize = (double)FindResource("FontSizeBase") - 1,
+                VerticalAlignment = VerticalAlignment.Center,
+                TextTrimming = TextTrimming.CharacterEllipsis,
+            };
+            label.SetResourceReference(TextBlock.ForegroundProperty, "TextSecondary");
+            row.Children.Add(bullet);
+            row.Children.Add(label);
+            SubtasksPanel.Children.Add(row);
+        }
     }
 
     private void OpenDatePicker(TextBlock? _)

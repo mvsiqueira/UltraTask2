@@ -50,3 +50,14 @@ _(nenhum item pendente no momento)_
 - [x] Ao excluir tag do cadastro, remove automaticamente das tarefas
 - [x] Filtro de tag atualizado ao adicionar/remover tag de tarefa e ao excluir tag do cadastro
 - [x] Janela Gerenciar Tags: painel superior mais compacto (altura natural dos controles)
+- [x] Ícone de notas atualiza cor imediatamente na troca de tema (SetResourceReference em vez de FindResource estático)
+- [x] Fontes Calibri, Century Gothic, Impact, Lucida Handwriting, Dancing Script, JetBrains Mono e Space Mono nas listas de tags e papéis (ordem alfabética)
+- [x] Dancing Script, JetBrains Mono e Space Mono embutidas no executável via FontHelper (funcionam sem instalação no sistema)
+- [x] Janela fica em foco e aparece na taskbar ao abrir pela versão DLL
+- [x] Padding no título da tarefa
+- [x] Nova tarefa é inserida no topo da lista
+- [x] Corrigido travamento ao seguir link ou editar tarefa com link no título (IsInteractiveDragSource não reconhecia Hyperlink como ContentElement)
+- [x] Feature de Subtarefas: cadastro por janela de texto (uma por linha), exibição indentada, chevron de expandir/colapsar configurável em Propriedades do Arquivo
+- [x] Corrigido label "subtasks" não traduzido na janela de Propriedades do Arquivo (FilePropertiesWindow, não TaskRowOrderWindow)
+- [x] Padding direito maior no chevron de subtarefas
+- [x] Separador do título da janela trocado de em dash (—) para hífen normal (-)

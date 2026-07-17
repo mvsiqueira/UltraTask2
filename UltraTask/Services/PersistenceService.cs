@@ -100,7 +100,7 @@ public static class PersistenceService
     {
         // Arquivo antigo sem task_row_order — aplica padrão.
         if (file.TaskRowOrder.Count == 0)
-            file.TaskRowOrder = ["tags", "assignee", "contact", "title", "pendencia", "notes", "spacer", "date"];
+            file.TaskRowOrder = ["subtasks", "tags", "assignee", "contact", "title", "pendencia", "notes", "spacer", "date"];
 
         if (!file.TaskRowOrder.Contains("pendencia"))
         {
@@ -108,6 +108,9 @@ public static class PersistenceService
             var insertAt = notesIdx >= 0 ? notesIdx : file.TaskRowOrder.Count;
             file.TaskRowOrder.Insert(insertAt, "pendencia");
         }
+
+        if (!file.TaskRowOrder.Contains("subtasks"))
+            file.TaskRowOrder.Insert(0, "subtasks");
 
         // Migra nomes antigos de estilo de chip para os novos.
         foreach (var entry in new[] { file.RoleConfig.Contact, file.RoleConfig.Assignee, file.RoleConfig.Pendencia })

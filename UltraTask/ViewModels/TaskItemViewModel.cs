@@ -57,6 +57,11 @@ public partial class TaskItemViewModel : ObservableObject
     public void RefreshTags() => OnPropertyChanged(nameof(TagNames));
     public IReadOnlyList<string> TagNames => Model.Tags;
 
+    // Subtarefas — a UI lê direto do Model.Subtasks (lista mutável).
+    // Chame RefreshSubtasks() para forçar notificação após mudanças.
+    public void RefreshSubtasks() => OnPropertyChanged(nameof(Subtasks));
+    public IReadOnlyList<string> Subtasks => Model.Subtasks;
+
     // --- Estado de UI (não persistido) ---
 
     [ObservableProperty]
@@ -64,6 +69,9 @@ public partial class TaskItemViewModel : ObservableObject
 
     [ObservableProperty]
     private bool _isSelected; // para operações em lote
+
+    [ObservableProperty]
+    private bool _isSubtasksExpanded = true; // estado de expansão, não persistido
 
     // Sincroniza todas as propriedades observáveis com o modelo subjacente.
     // Chamado após carregar um arquivo ou recarregar do disco.
@@ -79,6 +87,7 @@ public partial class TaskItemViewModel : ObservableObject
         SectionColor = Model.SectionColor;
         OnPropertyChanged(nameof(HasNotes));
         OnPropertyChanged(nameof(TagNames));
+        OnPropertyChanged(nameof(Subtasks));
     }
 
     // Notifica a UI de que as notas mudaram (para atualizar o badge).

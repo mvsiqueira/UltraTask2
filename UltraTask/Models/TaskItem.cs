@@ -40,6 +40,11 @@ public class TaskItem
     [JsonPropertyName("tags")]
     public List<string> Tags { get; set; } = [];
 
+    // Subtarefas — lista simples de textos, sem estado de conclusão.
+    // Quando executada, o usuário apaga a linha na janela de edição.
+    [JsonPropertyName("subtasks")]
+    public List<string> Subtasks { get; set; } = [];
+
     // "task" ou "section"
     [JsonPropertyName("item_type")]
     public string ItemType { get; set; } = "task";
@@ -64,6 +69,7 @@ public class TaskItem
         Assignee = Assignee,
         Pendencia = Pendencia,
         Tags = [.. Tags],
+        Subtasks = [.. Subtasks],
         ItemType = ItemType,
         SectionColor = SectionColor,
     };

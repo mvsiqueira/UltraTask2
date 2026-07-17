@@ -9,6 +9,7 @@ public partial class TaskRowOrderWindow : Window
 {
     private static readonly (string Key, string Label)[] AllTokens =
     [
+        ("subtasks", "Expansão de subtarefa"),
         ("tags",     "Tags"),
         ("assignee", "Designado"),
         ("contact",  "Contato"),

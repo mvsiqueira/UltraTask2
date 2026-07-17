@@ -3,7 +3,7 @@
 **Versão:** 2.0.0  
 **Plataforma:** Windows 10/11  
 **Stack:** C# / .NET 10 / WPF  
-**Atualizado:** 2026-06-13
+**Atualizado:** 2026-07-16
 
 ---
 
@@ -50,6 +50,7 @@ Unidade atômica da lista. Pode ser tarefa ou seção.
 | `Contact` | string | Nome do contato responsável |
 | `Assignee` | string | Nome do designado |
 | `Tags` | List\<string\> | Tags aplicadas ao item |
+| `Subtasks` | List\<string\> | Subtarefas — sem estado de conclusão próprio |
 | `ItemType` | string | `"task"` ou `"section"` |
 | `SectionColor` | string | Cor hex da seção |
 
@@ -78,6 +79,7 @@ Preferências locais do usuário. Persistidas em `settings.json` ao lado do exec
 | `WindowWidth/Height/Left/Top` | double | Geometria da janela |
 | `WindowState` | string | `"Normal"` / `"Maximized"` |
 | `TitlebarFormat` | string | `"app"` / `"list"` / `"app-list"` / `"list-app"` |
+| `HighlightImportant` | bool | Destaca fundo de tarefas importantes |
 
 ### TagEntry
 Entrada do catálogo de tags.
@@ -166,6 +168,9 @@ Conversão bidirecional entre HTML simples e `FlowDocument` do WPF.
 - `ToFlowDocument(html)` — renderiza para edição no RichTextBox
 - `ToHtml(doc)` — serializa de volta para armazenamento
 
+### FontHelper
+Resolve `FontFamily` pelo nome, retornando URI de pack para fontes embutidas como recurso (Dancing Script, JetBrains Mono, Space Mono) ou `FontFamily` normal para fontes do sistema. Usado por `TagChipControl` e `RoleChipControl`.
+
 ---
 
 ## 5. Camada de ViewModels (ViewModels/)
@@ -215,13 +220,20 @@ UserControl que representa uma linha na lista. Reconstrói-se via `Rebuild()` qu
 **Tokens suportados em TaskRowOrder:**
 | Token | Descrição |
 |---|---|
+| `subtasks` | Chevron de expandir/colapsar subtarefas (só renderiza se houver subtarefas) |
 | `tags` | Chips de tag com cor |
 | `assignee` | Chip de designado |
 | `contact` | Chip de contato |
 | `title` | Título editável inline (com links automáticos) |
+| `pendencia` | Chip de pendência (texto livre) |
 | `notes` | Badge de notas (ícone circular) |
 | `date` | Data de vencimento |
 | `spacer` | Espaço flexível |
+
+**Subtarefas:**
+- `Rebuild()` chama `RebuildSubtasksPanel()` ao final, que preenche o `StackPanel` de subtarefas abaixo da linha principal quando `Item.IsSubtasksExpanded` é true
+- O layout usa um `StackPanel` vertical (não `Grid` com `RowDefinition`) para acomodar altura variável sem o erro de conversão `GridLength`
+- `OpenSubtasksWindow()` chama `Rebuild()` completo (não só `RebuildSubtasksPanel()`) para que o chevron apareça/desapareça corretamente quando a tarefa ganha ou perde a última subtarefa
 
 **Seleção em lote:**
 - Checkbox controlado por eventos `Checked`/`Unchecked` (não por binding XAML)
@@ -252,6 +264,7 @@ Todas as janelas auxiliares têm:
 | `RoleManagerWindow` | `RoleConfig config, Action onChanged` | Config de papéis |
 | `LinkManagerWindow` | `List<LinkRule> rules, Action onChanged` | Regras de link |
 | `FilePropertiesWindow` | `TaskFile file, Action onSave` | Ordem de tokens |
+| `SubtasksWindow` | `IReadOnlyList<string> initial, Action<List<string>> onSave` | Edição de subtarefas (uma por linha) |
 | `AppSettingsWindow` | `AppSettings, Action<string>, Action` | Preferências do app |
 | `DatePickerWindow` | `DateOnly? current` | Seletor de data |
 | `ColorPickerDialog` | `string currentHex` | Seletor de cor |

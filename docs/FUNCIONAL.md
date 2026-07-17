@@ -2,7 +2,7 @@
 
 **Versão:** 2.0.0  
 **Plataforma:** Windows 10/11  
-**Atualizado:** 2026-06-16
+**Atualizado:** 2026-07-16
 
 ---
 
@@ -33,6 +33,9 @@ Três campos de texto livre exibidos como chips visuais na linha da tarefa. A ap
 
 ### Links automáticos
 Padrões regex configurados pelo usuário que transformam partes do título em hiperlinks clicáveis. Útil para tickets de sistema (ex: `[OS-1234]` → link para o sistema de OS).
+
+### Subtarefas
+Lista simples de itens de texto associada a uma tarefa, sem estado de conclusão próprio nem histórico — quando uma subtarefa é executada, o usuário simplesmente a remove da lista. Cadastradas e editadas por uma janela de texto (uma subtarefa por linha), exibidas indentadas abaixo do título da tarefa e podem ser expandidas/colapsadas por um chevron.
 
 ---
 
@@ -89,6 +92,7 @@ Cada tarefa é exibida em uma linha de altura configurável. Os campos exibidos 
 
 | Token | Exibição |
 |---|---|
+| `subtasks` | Chevron de expandir/colapsar subtarefas (só aparece se a tarefa tiver subtarefas) |
 | `tags` | Chips coloridos das tags |
 | `assignee` | Chip do designado |
 | `contact` | Chip do contato |
@@ -134,6 +138,9 @@ Clique na orelha colorida na lateral esquerda alterna o estado de importância. 
 ### Editar nota
 Menu de contexto > Notas abre a janela de notas.
 
+### Editar subtarefas
+Menu de contexto > Subtarefas abre uma janela com uma caixa de texto — uma subtarefa por linha. Salvar substitui a lista completa. O chevron ao lado do título (posicionável em Propriedades do Arquivo) expande/colapsa a lista de subtarefas na linha.
+
 ---
 
 ## 5. Menu de Contexto de Tarefas
@@ -150,6 +157,7 @@ Acessado com clique direito em qualquer tarefa:
 | ⚠ Definir pendência | Edição inline do texto de pendência |
 | 📅 Definir data | Abre seletor de data |
 | 📝 Notas | Abre janela de notas |
+| ☰ Subtarefas | Abre janela de edição de subtarefas |
 | ⧉ Duplicar | Cria cópia com novo ID |
 | 🗑 Excluir | Remove com confirmação |
 
@@ -305,7 +313,7 @@ Janela de preferências com os seguintes campos:
 | Arquivo de tarefas | Selecionador de arquivo |
 | Tema | Escuro / Claro |
 | Layout | Compact / Normal / Extended |
-| Formato da barra de título | Nome do app / Nome da lista / Nome do app — Nome da lista / Nome da lista — Nome do app |
+| Formato da barra de título | Nome do app / Nome da lista / Nome do app - Nome da lista / Nome da lista - Nome do app |
 | Realçar tarefas importantes | Checkbox — destaca o fundo das linhas marcadas como importantes |
 
 ---
@@ -315,7 +323,7 @@ Janela de preferências com os seguintes campos:
 Configura a **ordem e visibilidade dos campos** na linha de tarefa, por arquivo. As configurações ficam salvas no próprio arquivo `.json` e viajam junto com a lista.
 
 Campos disponíveis para ativar/desativar e reordenar:
-`tags`, `assignee`, `contact`, `title`, `pendencia`, `notes`, `spacer`, `date`
+`subtasks`, `tags`, `assignee`, `contact`, `title`, `pendencia`, `notes`, `spacer`, `date`
 
 ---
 
@@ -327,6 +335,9 @@ Catálogo de tags do arquivo corrente:
 - **Editar** cor, estilo, fonte e tamanho de uma tag existente
 - **Reordenar** as tags (afeta a ordem de exibição nos chips)
 - **Excluir** tag (remove do catálogo e automaticamente de todas as tarefas que a continham)
+
+### Fontes disponíveis
+Arial, Calibri, Century Gothic, Consolas, Courier New, Dancing Script, Impact, JetBrains Mono, Lucida Handwriting, Segoe UI, Space Mono, Tahoma, Verdana (ordem alfabética). Dancing Script, JetBrains Mono e Space Mono são embutidas no executável — funcionam mesmo sem estarem instaladas no Windows do usuário.
 
 ### Estilos de chip de tag
 

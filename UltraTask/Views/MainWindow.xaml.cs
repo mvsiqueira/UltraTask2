@@ -561,8 +561,8 @@ public partial class MainWindow : Window
         {
             ("list",     false) => listName!,
             ("list",     true)  => appName,
-            ("app-list", false) => $"{appName} — {listName}",
-            ("list-app", false) => $"{listName} — {appName}",
+            ("app-list", false) => $"{appName} - {listName}",
+            ("list-app", false) => $"{listName} - {appName}",
             _                   => appName,
         };
     }
