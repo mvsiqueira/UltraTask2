@@ -304,7 +304,7 @@ public partial class TaskRowControl : UserControl
             FontSize = (double)FindResource("FontSizeBase"),
             VerticalAlignment = VerticalAlignment.Center,
             MinWidth = 40,
-            Margin = new Thickness(0, 0, (double)FindResource("TokenSpacing"), 0),
+            Margin = new Thickness(4, 0, (double)FindResource("TokenSpacing"), 0),
         };
         editor.SetResourceReference(Control.ForegroundProperty,
             Item.Completed ? "TextMuted" : "TextPrimary");
@@ -359,16 +359,18 @@ public partial class TaskRowControl : UserControl
                     Foreground = linkFg,
                     TextDecorations = null,
                 };
-                // Impede o clique de propagar para o InlineTextEditor (evita abrir edição)
+                // Cancela drag antes que ele comece — PreviewMouseLeftButtonDown tunnela
+                // depois do RowBorder, então _isDragReady já foi setado; resetamos aqui.
+                link.PreviewMouseLeftButtonDown += (_, _) => _isDragReady = false;
                 link.MouseLeftButtonDown += (_, e) => e.Handled = true;
                 link.Click += (_, _) =>
                 {
-                    try
+                    var url = seg.Url;
+                    Task.Run(() =>
                     {
-                        System.Diagnostics.Process.Start(
-                            new System.Diagnostics.ProcessStartInfo(seg.Url) { UseShellExecute = true });
-                    }
-                    catch { }
+                        try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true }); }
+                        catch { }
+                    });
                 };
                 inlines.Add(link);
             }
@@ -583,11 +585,22 @@ public partial class TaskRowControl : UserControl
 
     private static bool IsInteractiveDragSource(object source)
     {
-        for (var el = source as DependencyObject; el is not null; el = VisualTreeHelper.GetParent(el))
+        var el = source as DependencyObject;
+
+        // OriginalSource pode ser um ContentElement (Run/Hyperlink dentro de TextBlock
+        // com inlines) — VisualTreeHelper.GetParent lança exceção para eles, então
+        // sobe pela árvore lógica até alcançar um Visual.
+        while (el is System.Windows.ContentElement)
+        {
+            if (el is System.Windows.Documents.Hyperlink)
+                return true;
+            el = LogicalTreeHelper.GetParent(el);
+        }
+
+        for (; el is not null; el = VisualTreeHelper.GetParent(el))
         {
             if (el is TextBox or Button or CheckBox or ComboBox or ListBox or System.Windows.Controls.Primitives.ScrollBar)
                 return true;
-            // Tag chips, role chips e outros controles clicáveis
             if (el is UserControl and not TaskRowControl)
                 return true;
         }
