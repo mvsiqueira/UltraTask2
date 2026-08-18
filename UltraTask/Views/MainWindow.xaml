@@ -37,9 +37,25 @@
                 Padding="16,10">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 
-                <!-- Ícone UltraTask -->
-                <Image Source="/Resources/app-logo.png" Width="36" Height="36" Margin="0,0,12,0"
-                       VerticalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality" />
+                <!-- Ícone UltraTask: glifo dourado (checkmark) -->
+                <Viewbox Width="52" Height="52" Margin="-10,0,12,0" VerticalAlignment="Center">
+                    <Canvas Width="128" Height="128">
+                        <Path Data="M8.3 23.4 C10.6 26.8 13.6 32.8 15.4 38.6 C16.1 40.8 18.3 41.3 19.5 39.2 C24.9 29.6 32.8 16.9 41.1 8.7 C41.7 8.1 41.1 7.3 40.4 7.7 C32.7 12.3 25.9 19.8 21.4 27.2 C20.1 25.2 18.5 23.2 16.6 21.5 C13.9 19.1 10.2 20.1 8.3 23.4 Z">
+                            <Path.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform ScaleX="2.291667" ScaleY="2.291667" />
+                                    <TranslateTransform X="9" Y="9" />
+                                </TransformGroup>
+                            </Path.RenderTransform>
+                            <Path.Fill>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0.85,1">
+                                    <GradientStop Offset="0" Color="#E7BE55" />
+                                    <GradientStop Offset="1" Color="#C4892C" />
+                                </LinearGradientBrush>
+                            </Path.Fill>
+                        </Path>
+                    </Canvas>
+                </Viewbox>
 
                 <StackPanel VerticalAlignment="Center">
                     <TextBlock Text="UltraTask"
