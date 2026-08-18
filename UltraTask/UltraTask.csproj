@@ -37,6 +37,7 @@
 
   <ItemGroup>
     <Resource Include="Resources\app-icon.ico" />
+    <Resource Include="Resources\app-logo.png" />
     <Resource Include="Fonts\DancingScript-Regular.ttf" />
     <Resource Include="Fonts\JetBrainsMono-Regular.ttf" />
     <Resource Include="Fonts\SpaceMono-Regular.ttf" />
