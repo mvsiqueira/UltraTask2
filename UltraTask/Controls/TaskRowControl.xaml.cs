@@ -140,7 +140,7 @@ public partial class TaskRowControl : UserControl
         foreach (var token in order)
         {
             if (token == "spacer") { rightSide = true; continue; }
-            var el = BuildToken(token, order);
+            var el = BuildToken(token, order, rightSide);
             if (el is null) continue;
             if (rightSide) RightArea.Children.Add(el);
             else LeftArea.Children.Add(el);
@@ -197,13 +197,13 @@ public partial class TaskRowControl : UserControl
 
     // ===== Tokens =====
 
-    private UIElement? BuildToken(string token, IReadOnlyList<string> order) => token switch
+    private UIElement? BuildToken(string token, IReadOnlyList<string> order, bool rightSide) => token switch
     {
         "tags"      => BuildTagsToken(),
-        "contact"   => BuildRoleToken("contact"),
-        "assignee"  => BuildRoleToken("assignee"),
+        "contact"   => BuildRoleToken("contact", rightSide),
+        "assignee"  => BuildRoleToken("assignee", rightSide),
         "title"     => BuildTitleToken(order),
-        "pendencia" => BuildPendenciaToken(),
+        "pendencia" => BuildPendenciaToken(rightSide),
         "notes"     => BuildNotesToken(),
         "subtasks"  => BuildSubtasksToggleToken(),
         "date"      => BuildDateToken(),
@@ -230,11 +230,30 @@ public partial class TaskRowControl : UserControl
         return panel;
     }
 
-    private UIElement? BuildRoleToken(string role)
+    // Âncoras invisíveis na posição do token quando o valor está vazio — usadas para
+    // posicionar o popup de "Definir X" (menu de contexto) no lugar correto da linha.
+    private FrameworkElement? _assigneeAnchor;
+    private FrameworkElement? _contactAnchor;
+    private FrameworkElement? _pendenciaAnchor;
+    // Se o token está depois do "spacer" na ordem — alinha o popup pela direita.
+    private bool _assigneeRightSide;
+    private bool _contactRightSide;
+    private bool _pendenciaRightSide;
+
+    private static FrameworkElement MakeInvisibleAnchor() => new Border { Width = 0, Height = 1 };
+
+    private UIElement? BuildRoleToken(string role, bool rightSide)
     {
         if (Item is null) return null;
+        if (role == "contact") _contactRightSide = rightSide; else _assigneeRightSide = rightSide;
+
         var value = role == "contact" ? Item.Contact : Item.Assignee;
-        if (string.IsNullOrEmpty(value)) return null;
+        if (string.IsNullOrEmpty(value))
+        {
+            var anchor = MakeInvisibleAnchor();
+            if (role == "contact") _contactAnchor = anchor; else _assigneeAnchor = anchor;
+            return anchor;
+        }
 
         var cfg = (role == "contact" ? RoleConfig?.Contact : RoleConfig?.Assignee)
                ?? (role == "contact"
@@ -256,21 +275,35 @@ public partial class TaskRowControl : UserControl
         // Clique esquerdo: editar valor inline via popup simples
         chip.MouseLeftButtonUp += (_, e) =>
         {
-            OpenRoleInlineEdit(role, value, chip);
+            OpenRoleInlineEdit(role, value, chip, rightSide);
             e.Handled = true;
         };
         return chip;
     }
 
-    private void OpenRoleInlineEdit(string role, string currentValue, UIElement anchor)
+    // Posiciona o popup abaixo da âncora: início alinhado (padrão) ou fim alinhado (campos após o "spacer").
+    private static void ApplyPopupAlignment(System.Windows.Controls.Primitives.Popup popup, bool alignRight)
+    {
+        if (!alignRight)
+        {
+            popup.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+            return;
+        }
+        popup.Placement = System.Windows.Controls.Primitives.PlacementMode.Custom;
+        popup.CustomPopupPlacementCallback = (popupSize, targetSize, _) =>
+            [new System.Windows.Controls.Primitives.CustomPopupPlacement(
+                new Point(targetSize.Width - popupSize.Width, targetSize.Height),
+                System.Windows.Controls.Primitives.PopupPrimaryAxis.None)];
+    }
+
+    private void OpenRoleInlineEdit(string role, string currentValue, UIElement anchor, bool alignRight = false)
     {
         var popup = new System.Windows.Controls.Primitives.Popup
         {
             PlacementTarget = anchor,
-            Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom,
             StaysOpen = false,
-            IsOpen = true,
         };
+        ApplyPopupAlignment(popup, alignRight);
         var tb = new TextBox
         {
             Text = currentValue,
@@ -296,6 +329,7 @@ public partial class TaskRowControl : UserControl
             }
         };
         popup.Child = new Border { Background = (SolidColorBrush)FindResource("BgPanel"), Child = tb, Padding = new Thickness(4) };
+        popup.IsOpen = true;
         tb.Focus();
         tb.SelectAll();
     }
@@ -453,9 +487,16 @@ public partial class TaskRowControl : UserControl
         return btn;
     }
 
-    private UIElement? BuildPendenciaToken()
+    private UIElement? BuildPendenciaToken(bool rightSide)
     {
-        if (Item is null || string.IsNullOrEmpty(Item.Pendencia)) return null;
+        if (Item is null) return null;
+        _pendenciaRightSide = rightSide;
+        if (string.IsNullOrEmpty(Item.Pendencia))
+        {
+            var anchor = MakeInvisibleAnchor();
+            _pendenciaAnchor = anchor;
+            return anchor;
+        }
         var chip = new RoleChipControl
         {
             Value = Item.Pendencia,
@@ -469,20 +510,19 @@ public partial class TaskRowControl : UserControl
         };
         chip.MouseLeftButtonUp += (_, e) =>
         {
-            OpenPendenciaInlineEdit(chip);
+            OpenPendenciaInlineEdit(chip, rightSide);
             e.Handled = true;
         };
         return chip;
     }
-    private void OpenPendenciaInlineEdit(UIElement anchor)
+    private void OpenPendenciaInlineEdit(UIElement anchor, bool alignRight = false)
     {
         var popup = new System.Windows.Controls.Primitives.Popup
         {
             PlacementTarget = anchor,
-            Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom,
             StaysOpen = false,
-            IsOpen = true,
         };
+        ApplyPopupAlignment(popup, alignRight);
         var tb = new TextBox
         {
             Text = Item!.Pendencia,
@@ -507,6 +547,7 @@ public partial class TaskRowControl : UserControl
             }
         };
         popup.Child = new Border { Background = (SolidColorBrush)FindResource("BgPanel"), Child = tb, Padding = new Thickness(4) };
+        popup.IsOpen = true;
         tb.Focus();
         tb.SelectAll();
     }
@@ -693,10 +734,13 @@ menu.Items.Add(MakeMenuItem("Definir data",       () => OpenDatePicker(null),   
     private void OpenRoleInlineEditByName(string role)
     {
         var value = role == "contact" ? Item!.Contact : Item!.Assignee;
-        OpenRoleInlineEdit(role, value, this);
+        var anchor = (role == "contact" ? _contactAnchor : _assigneeAnchor) as UIElement ?? this;
+        var rightSide = role == "contact" ? _contactRightSide : _assigneeRightSide;
+        OpenRoleInlineEdit(role, value, anchor, rightSide);
     }
 
-    private void OpenPendenciaInlineEditByName() => OpenPendenciaInlineEdit(this);
+    private void OpenPendenciaInlineEditByName() =>
+        OpenPendenciaInlineEdit((_pendenciaAnchor as UIElement) ?? this, _pendenciaRightSide);
 
     private void OpenTagEditor()
     {
@@ -831,6 +875,9 @@ menu.Items.Add(MakeMenuItem("Definir data",       () => OpenDatePicker(null),   
             Item.Model.NotesRich = string.IsNullOrWhiteSpace(html)
                 ? null
                 : new Models.NotesRich { Html = html };
+            // Limpa o campo legado (texto simples, herdado da versão Python) —
+            // sem isso, uma nota antiga nesse campo mantém o ícone mesmo após limpar a nota rica.
+            Item.Model.Notes = string.Empty;
             Item.RefreshNotes();
             ItemChanged?.Invoke(this, EventArgs.Empty);
             Rebuild();
@@ -868,7 +915,11 @@ menu.Items.Add(MakeMenuItem("Definir data",       () => OpenDatePicker(null),   
 
         foreach (var text in Item.Subtasks)
         {
-            var row = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 2) };
+            var row = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(0, 0, 0, 2),
+            };
             var bullet = new TextBlock
             {
                 Text = "–",
@@ -886,6 +937,10 @@ menu.Items.Add(MakeMenuItem("Definir data",       () => OpenDatePicker(null),   
             label.SetResourceReference(TextBlock.ForegroundProperty, "TextSecondary");
             row.Children.Add(bullet);
             row.Children.Add(label);
+            row.MouseLeftButtonDown += (_, e) =>
+            {
+                if (e.ClickCount == 2) { OpenSubtasksWindow(); e.Handled = true; }
+            };
             SubtasksPanel.Children.Add(row);
         }
     }

@@ -231,8 +231,8 @@ public partial class MainViewModel : ObservableObject
         var item = new TaskItem { Title = "Nova seção", ItemType = "section" };
         var vm = new TaskItemViewModel(item);
         vm.SyncFromModel();
-        AllItems.Add(vm);
-        CurrentFile?.Tasks.Add(item);
+        AllItems.Insert(0, vm);
+        CurrentFile?.Tasks.Insert(0, item);
         vm.IsEditing = true;
         ScheduleSave();
     }
